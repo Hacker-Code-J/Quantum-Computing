@@ -1,0 +1,292 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{physics}       % for bra-ket notation (optional)
+\usepackage{bm}            % for bold math symbols
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{tikz}          % for circuit diagrams
+\usetikzlibrary{quantikz}  % for quantum circuit diagrams
+
+%------------------------------------------------------------------------------
+% Theorem-like Environments
+%------------------------------------------------------------------------------
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%------------------------------------------------------------------------------
+% Custom Commands
+%------------------------------------------------------------------------------
+\renewcommand{\ket}[1]{\left|#1\right\rangle}
+\renewcommand{\bra}[1]{\left\langle#1\right|}
+\renewcommand{\braket}[2]{\left\langle#1\,\middle|\,#2\right\rangle}
+
+%------------------------------------------------------------------------------
+% Document Begins
+%------------------------------------------------------------------------------
+\begin{document}
+	
+	\frontmatter
+	\title{Deutsch's Algorithm and Logical Operations:\\ 
+		A Graduate-Level Quantum Computing Laboratory}
+	\author{Your Name}
+	\date{\today}
+	\maketitle
+	\tableofcontents
+	
+	\mainmatter
+	
+	\chapter{Introduction and Preliminaries}
+	\section{Abstract Algebraic and Logical Foundations}
+	
+	In these notes we adopt an abstract algebra viewpoint. A \emph{vector space} is regarded as an abelian group endowed with an action of a field. In our case the underlying field is $\mathbb{C}$, and the additive structure is that of an abelian group. In addition, we review fundamental Boolean operations that are used in describing the quantum oracle.
+	
+	\subsection*{Boolean Operations}
+	Let $A,B\in \{0,1\}$. We recall:
+	\begin{itemize}[leftmargin=*, labelsep=5mm]
+		\item \textbf{Negation (NOT):} 
+		\[
+		\overline{A} \quad \text{or} \quad A' \quad (\text{also denoted } \sim A)
+		\]
+		with truth table:
+		\[
+		\begin{array}{c|c}
+			A & \overline{A} \\
+			\hline
+			0 & 1 \\
+			1 & 0
+		\end{array}
+		\]
+		\item \textbf{Conjunction (AND):}
+		\[
+		A \land B \quad \text{or simply } AB,
+		\]
+		with
+		\[
+		\begin{array}{cc|c}
+			A & B & A \land B \\
+			\hline
+			0 & 0 & 0 \\
+			0 & 1 & 0 \\
+			1 & 0 & 0 \\
+			1 & 1 & 1
+		\end{array}
+		\]
+		\item \textbf{Disjunction (OR):}
+		\[
+		A \lor B \quad \text{or } A+B,
+		\]
+		with
+		\[
+		\begin{array}{cc|c}
+			A & B & A \lor B \\
+			\hline
+			0 & 0 & 0 \\
+			0 & 1 & 1 \\
+			1 & 0 & 1 \\
+			1 & 1 & 1
+		\end{array}
+		\]
+		\item \textbf{Exclusive OR (XOR):}
+		\[
+		A \oplus B,
+		\]
+		defined as modulo-$2$ addition:
+		\[
+		\begin{array}{cc|c}
+			A & B & A \oplus B \\
+			\hline
+			0 & 0 & 0 \\
+			0 & 1 & 1 \\
+			1 & 0 & 1 \\
+			1 & 1 & 0
+		\end{array}
+		\]
+	\end{itemize}
+	
+	In the context of quantum computing, the XOR operation is implemented by the controlled-NOT gate (CNOT) and is equivalent to the Kronecker (tensor) product in its matrix form.
+	
+	\section{The Oracle in Deutsch's Algorithm}
+	
+	Consider a function
+	\[
+	f:\{0,1\} \to \{0,1\},
+	\]
+	with the promise that $f$ is either \emph{constant} (i.e., $f(0)=f(1)$) or \emph{balanced} (i.e., $f(0)\neq f(1)$). In the quantum setting, we encode this function into a unitary operator (oracle) $U_f$ defined by:
+	\[
+	U_f \colon \ket{x,y} \mapsto \ket{x,\,y\oplus f(x)}.
+	\]
+	Notice that when $f(x)=0$, the oracle acts as the identity on the target qubit, and when $f(x)=1$, it acts as the NOT operator, i.e., 
+	\[
+	U_f \ket{x,y} = \begin{cases}
+		\ket{x,y}, & f(x)=0,\\[1mm]
+		\ket{x,\overline{y}}, & f(x)=1.
+	\end{cases}
+	\]
+	This formulation guarantees the reversibility required for unitary evolution.
+	
+	\chapter{Deutsch's Algorithm: Quantum Circuit and Detailed Analysis}
+	\section{Quantum Circuit Implementation}
+	The Deutsch algorithm determines the nature of $f$ with one query to the oracle by exploiting quantum superposition and interference.
+	
+	\subsection*{Circuit Overview}
+	The quantum circuit consists of:
+	\begin{enumerate}[label=\textbf{Step \arabic*:}, leftmargin=*, align=left]
+		\item \textbf{Initialization:} Prepare the two-qubit state
+		\[
+		\ket{\psi_0}=\ket{0}\otimes\ket{1}.
+		\]
+		\item \textbf{Superposition via Hadamard:} Apply the Hadamard gate $H$ to each qubit, where
+		\[
+		H\ket{0}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1}),\quad H\ket{1}=\frac{1}{\sqrt{2}}(\ket{0}-\ket{1}).
+		\]
+		The state becomes
+		\[
+		\ket{\psi_1}=\frac{1}{2} \left[(\ket{0}+\ket{1})\otimes (\ket{0}-\ket{1})\right].
+		\]
+		\item \textbf{Oracle Query:} Apply $U_f$, resulting in the state
+		\[
+		\ket{\psi_2}=\frac{1}{2} \Bigl[\ket{0,\,0\oplus f(0)}-\ket{0,\,1\oplus f(0)}+\ket{1,\,0\oplus f(1)}-\ket{1,\,1\oplus f(1)}\Bigr].
+		\]
+		\item \textbf{Interference via Hadamard on the Control Qubit:} Apply $H\otimes I$ to yield a state in which the amplitude of $\ket{0}$ on the control qubit is proportional to
+		\[
+		(-1)^{f(0)}+(-1)^{f(1)}.
+		\]
+		\item \textbf{Measurement:} Measuring the control qubit then reveals:
+		\[
+		\begin{cases}
+			\ket{0} & \text{if } f(0)=f(1)\quad (\text{constant}),\\[1mm]
+			\ket{1} & \text{if } f(0)\neq f(1)\quad (\text{balanced}).
+		\end{cases}
+		\]
+	\end{enumerate}
+	
+	\subsection*{Circuit Diagram}
+	For illustration, the following quantum circuit (using \texttt{quantikz}) represents the above steps:
+	
+	\begin{center}
+		\begin{quantikz}[column sep=0.8cm]
+			\lstick{$\ket{0}$} & \gate{H} & \ctrl{1} & \gate{H} & \meter{$\;0/1$} \\
+			\lstick{$\ket{1}$} & \gate{H} & \gate{U_f} & \qw      & \qw
+		\end{quantikz}
+	\end{center}
+	
+	\section{Detailed State Evolution}
+	\subsection*{After Hadamard Gates}
+	Starting from
+	\[
+	\ket{\psi_0}=\ket{0}\otimes\ket{1},
+	\]
+	the Hadamard transform gives:
+	\[
+	\ket{\psi_1}=\frac{1}{2}\Bigl[\ket{0,0}-\ket{0,1}+\ket{1,0}-\ket{1,1}\Bigr].
+	\]
+	
+	\subsection*{After Oracle Application}
+	Using
+	\[
+	U_f\ket{x,y}=\ket{x,\,y\oplus f(x)},
+	\]
+	we have:
+	\[
+	\ket{\psi_2}=\frac{1}{2}\Bigl[\ket{0,f(0)}-\ket{0,1-f(0)}+\ket{1,f(1)}-\ket{1,1-f(1)}\Bigr].
+	\]
+	
+	\subsection*{After Final Hadamard on the First Qubit}
+	Applying $H$ to the first qubit, we obtain interference patterns such that the amplitude on $\ket{0}$ is proportional to
+	\[
+	(-1)^{f(0)}+(-1)^{f(1)}.
+	\]
+	Thus, measurement of the first qubit distinguishes the two cases:
+	\[
+	\begin{aligned}
+		\text{If } f(0)=f(1): &\quad (-1)^{f(0)}+(-1)^{f(1)}= \pm 2, \quad \text{yielding outcome } \ket{0},\\[1mm]
+		\text{If } f(0)\neq f(1): &\quad (-1)^{f(0)}+(-1)^{f(1)}=0, \quad \text{yielding outcome } \ket{1}.
+	\end{aligned}
+	\]
+	
+	\section{Uncomputation and Reversibility}
+	An important aspect of the quantum oracle is that it is a reversible (unitary) operator. In some implementations the operation $U_f$ is “uncomputed” (i.e., reversed) to eliminate ancillary information. For example, one may show that
+	\[
+	U_f\ket{x,y}=\ket{x,y\oplus f(x)}
+	\]
+	can be inverted by applying the same operator $U_f$ a second time:
+	\[
+	U_f^2=\mathbb{I},
+	\]
+	since modulo-$2$ addition is its own inverse.
+	
+	\chapter{Lab Implementation and Programming Aspects}
+	\section{Overview of the Laboratory}
+	In this laboratory we implement Deutsch's algorithm on a quantum circuit simulator (using, e.g., Qiskit). In addition, we review how to use Boolean logic operators in Python, including:
+	\begin{itemize}[leftmargin=*, labelsep=5mm]
+		\item \texttt{not} (logical NOT),
+		\item \texttt{and} (logical AND),
+		\item \texttt{or} (logical OR),
+		\item \texttt{xor} (exclusive OR, which in Python can be implemented via the caret operator \texttt{\^}).
+	\end{itemize}
+	
+	\section{Python Implementation Highlights}
+	For example, when defining the oracle in Qiskit:
+\begin{verbatim}
+def Uf(qc, f):
+	"""
+	Implements the oracle U_f:
+	U_f|x,y> = |x, y xor f(x)>
+	"""
+	# Apply CNOT if f(x)==1; otherwise, do nothing.
+	for qubit in qc.qubits:
+	if f(qubit):  # pseudo-code: depends on implementation of f
+	qc.cx(control, target)
+\end{verbatim}
+	Additionally, one may fix the seed of the random number generator (using \texttt{numpy.random.seed()}) to ensure reproducibility of random choices in the lab.
+	
+	\section{Slide Outline}
+	Below is a suggested slide sequence for the lecture:
+	\begin{enumerate}[label=\textbf{Slide \arabic*:}, leftmargin=*, align=left]
+		\item Deutsch Algorithm Implementation Overview.
+		\item Statement of Deutsch Algorithm.
+		\item Boolean Logic: NOT Operator.
+		\item Boolean Logic: AND Operator.
+		\item Boolean Logic: OR Operator.
+		\item Boolean Logic: XOR Operator.
+		\item Combined Logic Operations: NOT, AND, OR, XOR.
+		\item \quad [Additional slides as needed for details.]
+		\item Oracle Circuit Uncomputation.
+		\item Python Random Seed and Control Flow (\texttt{if} statements).
+		\item Use of \texttt{QuantumCircuit.compose()}.
+		\item Automatic creation of classical registers via \texttt{QuantumCircuit.measure\_all()}.
+		\item Deutsch Algorithm Recap.
+		\item Criteria for Constant versus Balanced Functions.
+		\item Examples using Python dictionaries (\texttt{dict} class) and formatted strings.
+		\item Uploading and downloading \texttt{.ipynb} files on Colab.
+		\item Final submission instructions.
+	\end{enumerate}
+	
+	\chapter{Exercises}
+	\begin{enumerate}[label=\textbf{Exercise \arabic*:}]
+		\item \textbf{State Decomposition:}  
+		Express the two-qubit state at the point of the oracle (or after the red-dashed stage in the circuit) as a linear combination of the computational basis states $\ket{00}$, $\ket{01}$, $\ket{10}$, and $\ket{11}$.
+		\item \textbf{Measurement Probabilities:}  
+		Assuming that $f(0)=f(1)=1$, compute the probabilities of obtaining measurement outcomes 0 and 1 for the control qubit.
+		\item \textbf{Oracle Uncomputation:}  
+		Show that the operator $U_f$, defined by $U_f\ket{x,y}=\ket{x,y\oplus f(x)}$, is its own inverse.
+	\end{enumerate}
+	
+	\chapter{Conclusion}
+	We have rigorously described Deutsch's algorithm from an abstract algebra and quantum computing viewpoint. The discussion has spanned Boolean logic, the algebraic structure of vector spaces, quantum circuit implementation, and the subtleties of oracle uncomputation. This exposition is intended to serve as a detailed reference for both theoretical understanding and practical implementation in a laboratory setting.
+	
+	\backmatter
+	\chapter{References}
+	\begin{enumerate}[label={[\arabic*]}]
+		\item M.A. Nielsen and I.L. Chuang, \emph{Quantum Computation and Quantum Information}.
+		\item D. Deutsch, ``Quantum theory, the Church--Turing principle and the universal quantum computer,'' \emph{Proc. R. Soc. Lond. A} \textbf{400}, 97--117 (1985).
+		\item P. Shor, \emph{Introduction to Quantum Algorithms}.
+		\item S. Lang, \emph{Algebra}.
+	\end{enumerate}
+	
+\end{document}

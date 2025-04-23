@@ -1,0 +1,274 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{physics}       % For bra-ket notation (optional)
+\usepackage{bm}            % For bold math symbols
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{tikz}          % For circuit diagrams (if needed)
+\usetikzlibrary{quantikz}  % For quantum circuits
+
+%------------------------------------------------------------------------------
+% Theorem-like Environments
+%------------------------------------------------------------------------------
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%------------------------------------------------------------------------------
+% Custom Commands for Bra-Ket Notation
+%------------------------------------------------------------------------------
+\renewcommand{\ket}[1]{\left|#1\right\rangle}
+\renewcommand{\bra}[1]{\left\langle#1\right|}
+\renewcommand{\braket}[2]{\left\langle#1\,\middle|\,#2\right\rangle}
+
+%------------------------------------------------------------------------------
+% Document Begins
+%------------------------------------------------------------------------------
+\begin{document}
+	
+	\frontmatter
+	\title{Deutsch's Algorithm:\\ An Algebraic and Quantum Computational Approach}
+	\author{Your Name}
+	\date{\today}
+	\maketitle
+	\tableofcontents
+	
+	\mainmatter
+	
+	\chapter{Preliminaries}
+	\section{Abstract Algebraic Foundations}
+	
+	In our treatment, a \emph{vector space} is regarded as an abelian group equipped with a compatible field action. In particular, let $\mathbb{F}$ be a field (usually $\mathbb{C}$) and let $(V,+)$ be an abelian group. A scalar multiplication
+	\[
+	\cdot : \mathbb{F} \times V \to V
+	\]
+	endows $V$ with the structure of an $\mathbb{F}$-module if for all $\alpha,\beta\in\mathbb{F}$ and all $x,y\in V$, we have:
+	\begin{enumerate}[label=(\roman*)]
+		\item $\alpha\cdot (x+y)=\alpha\cdot x+\alpha\cdot y$,
+		\item $(\alpha+\beta)\cdot x=\alpha\cdot x+\beta\cdot x$,
+		\item $(\alpha\beta)\cdot x=\alpha\cdot (\beta\cdot x)$,
+		\item $1_{\mathbb{F}}\cdot x=x$.
+	\end{enumerate}
+	When $\mathbb{F}$ is a field, an $\mathbb{F}$-module is precisely a vector space.
+	
+	\begin{definition}[Hilbert Space]
+		A \emph{Hilbert space} $\mathcal{H}$ is a vector space over $\mathbb{C}$ (viewed as an abelian group with scalar action) equipped with an inner product
+		\[
+		\braket{\cdot}{\cdot} : \mathcal{H}\times \mathcal{H} \to \mathbb{C},
+		\]
+		which is positive-definite and sesquilinear, and is complete with respect to the norm
+		\[
+		\|\psi\|=\sqrt{\braket{\psi}{\psi}}.
+		\]
+	\end{definition}
+	
+	\section{Dirac's Bra--Ket Notation}
+	
+	To facilitate discussion in quantum mechanics, we employ Dirac's bra--ket notation.
+	
+	\begin{definition}[Bra and Ket]
+		Let $\mathcal{H}$ be a Hilbert space. An element $\ket{\psi}\in\mathcal{H}$ is called a \emph{ket}, while the corresponding \emph{bra} is the linear functional $\bra{\psi}\in\mathcal{H}^*$ defined by
+		\[
+		\bra{\psi}(\ket{\varphi})=\braket{\psi}{\varphi},\quad \forall\,\ket{\varphi}\in\mathcal{H}.
+		\]
+	\end{definition}
+	
+	The superposition principle follows from the abelian group structure:
+	\[
+	\text{If } \ket{\psi},\,\ket{\varphi}\in\mathcal{H} \text{ and } \alpha,\beta\in\mathbb{C}, \quad \alpha\ket{\psi}+\beta\ket{\varphi}\in \mathcal{H}.
+	\]
+	
+	\chapter{Deutsch's Algorithm: Problem Statement and Classical Preliminaries}
+	
+	\section{Problem Statement}
+	
+	Consider a function 
+	\[
+	f:\{0,1\}\to \{0,1\},
+	\]
+	with the promise that $f$ is either \emph{constant} or \emph{balanced}. In this context, since the domain has only two elements, $f$ is:
+	\begin{itemize}
+		\item \emph{Constant} if $f(0)=f(1)$,
+		\item \emph{Balanced} if $f(0)\neq f(1)$.
+	\end{itemize}
+	
+	\textbf{Task:} Given oracle (black box) access to $f$, determine whether $f$ is constant or balanced.
+	
+	\section{Classical Approach}
+	
+	In classical computation, one must evaluate $f(0)$ and $f(1)$ independently, requiring \emph{two} evaluations to decide the problem.
+	
+	\section{The Oracle and the Unitary Operator}
+	
+	In quantum computation, the function $f$ is embedded into a unitary operator (oracle) $U_f$, defined by:
+	\[
+	U_f\ket{x,y}=\ket{x,\,y\oplus f(x)},
+	\]
+	where $x\in\{0,1\}$, $y\in\{0,1\}$, and $\oplus$ denotes addition modulo $2$. This construction ensures that $U_f$ is reversible, as required for quantum evolution.
+	
+	\chapter{Deutsch's Algorithm: Quantum Circuit and Detailed Analysis}
+	
+	\section{Circuit Description}
+	
+	The Deutsch algorithm is implemented by the following quantum circuit:
+	\begin{enumerate}[label=\textbf{Step \arabic*:}, leftmargin=*, align=left]
+		\item \textbf{Initialization:} Prepare the state
+		\[
+		\ket{\psi_0}=\ket{0}\otimes\ket{1}.
+		\]
+		\item \textbf{Hadamard Transform:} Apply the Hadamard gate $H$ to each qubit. Recall that
+		\[
+		H\ket{0}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1}),\quad H\ket{1}=\frac{1}{\sqrt{2}}(\ket{0}-\ket{1}).
+		\]
+		Thus, the state becomes
+		\[
+		\ket{\psi_1}=(H\otimes H)\ket{0,1}=\frac{1}{2}\Bigl[(\ket{0}+\ket{1})\otimes(\ket{0}-\ket{1})\Bigr].
+		\]
+		\item \textbf{Oracle Query:} Apply the oracle $U_f$ to $\ket{\psi_1}$. Because
+		\[
+		U_f\ket{x,y}=\ket{x,y\oplus f(x)},
+		\]
+		the resulting state is
+		\[
+		\ket{\psi_2}=\frac{1}{2}\Bigl[\ket{0,\,0\oplus f(0)}-\ket{0,\,1\oplus f(0)}+\ket{1,\,0\oplus f(1)}-\ket{1,\,1\oplus f(1)}\Bigr].
+		\]
+		\item \textbf{Interference via Hadamard:} Apply the Hadamard transform $H$ to the first qubit:
+		\[
+		\ket{\psi_3}=(H\otimes I)\ket{\psi_2}.
+		\]
+		A detailed calculation shows that the amplitude on the first qubit encodes the quantity
+		\[
+		\frac{1}{2}\Bigl[(-1)^{f(0)}+(-1)^{f(1)}\Bigr].
+		\]
+		\item \textbf{Measurement:} Measure the first qubit in the computational basis. One obtains
+		\[
+		\begin{cases}
+			\ket{0}, & \text{if } (-1)^{f(0)}+(-1)^{f(1)}\neq 0, \quad (\text{i.e., } f(0)=f(1));\\[1mm]
+			\ket{1}, & \text{if } (-1)^{f(0)}+(-1)^{f(1)}=0, \quad (\text{i.e., } f(0)\neq f(1)).
+		\end{cases}
+		\]
+	\end{enumerate}
+	
+	\section{Detailed State Transformations}
+	
+	For completeness, we detail the state evolution through the algorithm.
+	
+	\subsection*{After Hadamard Transforms}
+	
+	Starting with
+	\[
+	\ket{\psi_0}=\ket{0}\otimes\ket{1},
+	\]
+	after applying $H\otimes H$, we obtain
+	\begin{align*}
+		\ket{\psi_1} &= \left(\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\right)\otimes\left(\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})\right)\\[1mm]
+		&=\frac{1}{2}\Bigl[\ket{0,0}-\ket{0,1}+\ket{1,0}-\ket{1,1}\Bigr].
+	\end{align*}
+	
+	\subsection*{After Oracle Application}
+	
+	The oracle acts as
+	\[
+	U_f\ket{x,y}=\ket{x,y\oplus f(x)},
+	\]
+	so
+	\[
+	\ket{\psi_2}=\frac{1}{2}\Bigl[\ket{0,\,0\oplus f(0)}-\ket{0,\,1\oplus f(0)}+\ket{1,\,0\oplus f(1)}-\ket{1,\,1\oplus f(1)}\Bigr].
+	\]
+	Noting that addition modulo $2$ satisfies
+	\[
+	0\oplus f(x)=f(x) \quad \text{and} \quad 1\oplus f(x)=1-f(x),
+	\]
+	we can rewrite the state as
+	\[
+	\ket{\psi_2}=\frac{1}{2}\Bigl[\ket{0,f(0)}-\ket{0,1-f(0)}+\ket{1,f(1)}-\ket{1,1-f(1)}\Bigr].
+	\]
+	
+	\subsection*{After Final Hadamard on the First Qubit}
+	
+	Apply $H$ to the first qubit:
+	\[
+	H\ket{0}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1}), \quad H\ket{1}=\frac{1}{\sqrt{2}}(\ket{0}-\ket{1}).
+	\]
+	Thus,
+	\[
+	\ket{\psi_3}=(H\otimes I)\ket{\psi_2}=\frac{1}{2\sqrt{2}}\sum_{x\in\{0,1\}}\Bigl[(-1)^{x\cdot 0}\ket{0} + (-1)^{x\cdot 1}\ket{1}\Bigr]\otimes \Bigl[ \cdots \Bigr],
+	\]
+	which, after grouping terms, yields an amplitude on $\ket{0}$ proportional to
+	\[
+	(-1)^{f(0)}+(-1)^{f(1)}.
+	\]
+	
+	\subsection*{Measurement Outcome}
+	
+	A measurement in the computational basis on the first qubit then distinguishes:
+	\[
+	\ket{0} \quad \text{if } (-1)^{f(0)}+(-1)^{f(1)}\neq 0 \quad \Longleftrightarrow \quad f(0)=f(1),
+	\]
+	and
+	\[
+	\ket{1} \quad \text{if } (-1)^{f(0)}+(-1)^{f(1)}=0 \quad \Longleftrightarrow \quad f(0)\neq f(1).
+	\]
+	Thus, Deutsch's algorithm determines whether $f$ is constant or balanced with a single query (oracle evaluation) on a quantum computer.
+	
+	\section{Phase Kickback and Oracle Implementation}
+	
+	A key concept in Deutsch's algorithm is \emph{phase kickback}. In the implementation of $U_f$, the target qubit is prepared in a state $\ket{-}$, where
+	\[
+	\ket{-}=\frac{1}{\sqrt{2}}(\ket{0}-\ket{1}).
+	\]
+	The action of $U_f$ then imprints a phase $(-1)^{f(x)}$ on the control qubit:
+	\[
+	U_f\ket{x}\ket{-}=\ket{x}\ket{-\oplus f(x)} = (-1)^{f(x)}\ket{x}\ket{-}.
+	\]
+	This phase encoding is then revealed by subsequent interference (Hadamard transform) on the control qubit.
+	
+	\section{Summary of Algorithmic Steps (Slides Overview)}
+	For completeness, we list the conceptual steps as they might appear in a lecture slide sequence:
+	\begin{enumerate}[label=\textbf{Slide \arabic*:}, leftmargin=*, align=left]
+		\item \textbf{Deutsch Algorithm Overview:} Problem statement and promise on $f$.
+		\item \textbf{Function Definition:} $f:\{0,1\}\to\{0,1\}$, constant versus balanced.
+		\item \textbf{Classical Evaluation:} Necessity of two evaluations.
+		\item \textbf{Oracle Construction:} Definition of $U_f\ket{x,y}=\ket{x,y\oplus f(x)}$.
+		\item \textbf{Quantum Circuit Initialization:} Prepare $\ket{0}\otimes\ket{1}$.
+		\item \textbf{Hadamard Transformation:} Transition to superposition.
+		\item \textbf{Oracle Application:} State transformation under $U_f$.
+		\item \textbf{Phase Kickback:} Imprinting phase $(-1)^{f(x)}$.
+		\item \textbf{Interference via Hadamard:} Extraction of global phase information.
+		\item \textbf{Measurement:} Readout distinguishing constant vs balanced.
+		\item \textbf{Conclusion:} Deutsch's algorithm solves the problem with one oracle query.
+	\end{enumerate}
+	
+	\chapter{Exercises and Further Directions}
+	
+	\section*{Assignment}
+	\begin{enumerate}[label=\textbf{Problem \arabic*:}]
+		\item \textbf{State Decomposition:}  
+		Express the two-qubit state at the red-dashed point (as indicated in the lecture circuit diagram) as a linear combination of the computational basis vectors $\ket{00}$, $\ket{01}$, $\ket{10}$, and $\ket{11}$.
+		\item \textbf{Measurement Probabilities:}  
+		Suppose that $f(0)=f(1)=1$ (i.e., $f$ is constant with value $1$). Compute the probabilities of obtaining outcomes $0$ and $1$ when measuring the first qubit.
+	\end{enumerate}
+	
+	\section*{Further Reading}
+	Readers are encouraged to consult the following references for additional background on quantum algorithms and the algebraic foundations of quantum mechanics:
+	\begin{itemize}
+		\item M.A. Nielsen and I.L. Chuang, \emph{Quantum Computation and Quantum Information}.
+		\item P. Shor, \emph{Introduction to Quantum Algorithms}.
+		\item J. Preskill, \emph{Lecture Notes for Physics 229: Quantum Information and Computation}.
+	\end{itemize}
+	
+	\backmatter
+	\chapter{References}
+	\begin{enumerate}[label={[\arabic*]}]
+		\item M.A. Nielsen and I.L. Chuang, \emph{Quantum Computation and Quantum Information}.
+		\item D. Deutsch, ``Quantum theory, the Church--Turing principle and the universal quantum computer,'' \emph{Proc. R. Soc. Lond. A} \textbf{400}, 97--117 (1985).
+		\item S. Lang, \emph{Algebra}.
+		\item J.J. Sakurai, \emph{Modern Quantum Mechanics}.
+	\end{enumerate}
+	
+\end{document}

@@ -1,0 +1,911 @@
+
+\documentclass[11pt,oneside]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{physics} % optional, for bra-ket notation
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+%------------------------------------------------------------------------------
+% Theorem-like Environments
+%------------------------------------------------------------------------------
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%------------------------------------------------------------------------------
+% Custom Commands for Bra-Ket Notation
+%------------------------------------------------------------------------------
+\renewcommand{\ket}[1]{\left| #1 \right\rangle}
+\renewcommand{\bra}[1]{\left\langle #1 \right|}
+\renewcommand{\braket}[2]{\left\langle #1 \middle| #2 \right\rangle}
+
+%------------------------------------------------------------------------------
+% Document Begins
+%------------------------------------------------------------------------------
+\begin{document}
+	
+	\frontmatter
+	\title{Abstract Algebraic Foundations of Quantum Mechanics\\[1ex]
+		\large Detailed Graduate-Level Lecture Notes}
+	\author{Your Name}
+	\date{\today}
+	\maketitle
+	\tableofcontents
+	
+	\mainmatter
+	
+	\chapter{Algebraic Structures: Groups, Fields, and Modules}
+	\section{Abelian Groups and Fields}
+	In abstract algebra, a \emph{group} is a set equipped with an operation satisfying associativity, the existence of an identity element, and inverses. When the operation is also commutative, the group is said to be \emph{abelian}.
+	
+	\begin{definition}[Abelian Group]
+		A pair $(G, +)$ is an \emph{abelian group} if:
+		\begin{enumerate}[label=(\roman*)]
+			\item (Closure) For all $a,b\in G$, the sum $a+b \in G$.
+			\item (Associativity) For all $a,b,c\in G$, $(a+b)+c = a+(b+c)$.
+			\item (Identity) There exists an element $0 \in G$ such that for all $a\in G$, $a+0=a$.
+			\item (Inverses) For each $a\in G$, there exists an element $-a \in G$ such that $a+(-a)=0$.
+			\item (Commutativity) For all $a,b\in G$, $a+b = b+a$.
+		\end{enumerate}
+	\end{definition}
+	
+	A \emph{field} is a set that is simultaneously an abelian group with respect to addition and a multiplicative abelian group (excluding the additive identity), where the two operations are related by distributivity.
+	
+	\begin{definition}[Field]
+		A set $\mathbb{F}$, together with two operations $+$ and $\cdot$, is a \emph{field} if:
+		\begin{enumerate}[label=(\roman*)]
+			\item $(\mathbb{F},+)$ is an abelian group with identity element $0$.
+			\item $(\mathbb{F}\setminus\{0\},\cdot)$ is an abelian group with identity element $1\neq 0$.
+			\item (Distributivity) For all $a,b,c\in \mathbb{F}$, 
+			\[
+			a\cdot(b+c)= a\cdot b + a\cdot c.
+			\]
+		\end{enumerate}
+	\end{definition}
+	
+	\section{Modules and Vector Spaces}
+	In abstract algebra, a \emph{module} is a generalization of the notion of a vector space. When the underlying ring is a field, a module is precisely a vector space.
+	
+	\begin{definition}[Module]
+		Let $R$ be a ring and $(M,+)$ an abelian group. The set $M$ is an \emph{$R$-module} if there exists a scalar multiplication 
+		\[
+		\cdot : R \times M \to M,
+		\]
+		satisfying for all $r,s\in R$ and $x,y\in M$:
+		\begin{enumerate}[label=(\alph*)]
+			\item $r\cdot (x+y) = r\cdot x + r\cdot y$,
+			\item $(r+s)\cdot x = r\cdot x + s\cdot x$,
+			\item $(rs)\cdot x = r\cdot (s\cdot x)$,
+			\item $1_R \cdot x = x$, where $1_R$ is the multiplicative identity in $R$.
+		\end{enumerate}
+	\end{definition}
+	
+	\begin{definition}[Vector Space]
+		Let $\mathbb{F}$ be a field. A \emph{vector space} over $\mathbb{F}$ is an $\mathbb{F}$-module $(V,+)$; that is, $V$ is an abelian group under addition together with a scalar multiplication $\mathbb{F}\times V\to V$ satisfying the axioms listed above.
+	\end{definition}
+	
+	\begin{example}
+		The set $\mathbb{F}^n$, consisting of $n$-tuples over $\mathbb{F}$, is a vector space over $\mathbb{F}$ under coordinatewise addition and scalar multiplication.
+	\end{example}
+	
+	\chapter{Inner Product Spaces and Hilbert Spaces}
+	\section{Inner Product as a Bilinear (or Sesquilinear) Form}
+	In the context of vector spaces over $\mathbb{C}$, the inner product is defined as a positive-definite, sesquilinear form.
+	
+	\begin{definition}[Inner Product]
+		Let $V$ be a vector space over $\mathbb{C}$. An \emph{inner product} on $V$ is a function
+		\[
+		\langle \cdot,\cdot \rangle: V \times V \to \mathbb{C},
+		\]
+		such that for all $\mathbf{u},\mathbf{v},\mathbf{w}\in V$ and $\alpha\in \mathbb{C}$:
+		\begin{enumerate}[label=(\roman*)]
+			\item (Conjugate Symmetry) $\langle \mathbf{u},\mathbf{v} \rangle = \overline{\langle \mathbf{v},\mathbf{u} \rangle}$.
+			\item (Linearity in the First Argument) $\langle \alpha \mathbf{u} + \mathbf{v}, \mathbf{w} \rangle = \alpha\,\langle \mathbf{u},\mathbf{w} \rangle + \langle \mathbf{v},\mathbf{w} \rangle$.
+			\item (Positive Definiteness) $\langle \mathbf{v},\mathbf{v} \rangle \ge 0$, with equality if and only if $\mathbf{v}=\mathbf{0}$.
+		\end{enumerate}
+		For real vector spaces, the inner product is bilinear.
+	\end{definition}
+	
+	\begin{definition}[Hilbert Space]
+		A \emph{Hilbert space} $\mathcal{H}$ is an inner product space that is complete with respect to the metric induced by the norm
+		\[
+		\|\mathbf{v}\| \coloneqq \sqrt{\langle \mathbf{v},\mathbf{v} \rangle}.
+		\]
+	\end{definition}
+	
+	\begin{remark}
+		In quantum mechanics, the state space is modeled as a Hilbert space, where physical states are represented by unit vectors.
+	\end{remark}
+	
+	\section{Orthonormal Bases and Decompositions}
+	\begin{definition}[Orthonormal Set]
+		An indexed subset $\{\ket{v_i}\}_{i \in I}$ of a Hilbert space $\mathcal{H}$ is \emph{orthonormal} if for all $i,j\in I$,
+		\[
+		\braket{v_i}{v_j} = \delta_{ij},
+		\]
+		where $\delta_{ij}$ denotes the Kronecker delta.
+	\end{definition}
+	
+	\begin{definition}[Complete Orthonormal Basis]
+		An orthonormal set $\{\ket{v_i}\}_{i\in I}$ is a \emph{complete orthonormal basis} for $\mathcal{H}$ if every $\ket{\psi}\in \mathcal{H}$ can be uniquely expressed as
+		\[
+		\ket{\psi} = \sum_{i\in I} c_i \ket{v_i},
+		\]
+		with coefficients given by
+		\[
+		c_i = \braket{v_i}{\psi},
+		\]
+		and where the series converges in the norm induced by the inner product.
+	\end{definition}
+	
+	\chapter{Dirac’s Bra–Ket Notation in an Algebraic Setting}
+	\section{Dual Spaces and Linear Functionals}
+	Let $V$ be a vector space over $\mathbb{F}$. Its dual space, denoted $V^*$, is the set of all linear functionals from $V$ to $\mathbb{F}$. In quantum mechanics, every state vector $\ket{\psi}\in \mathcal{H}$ is associated with a dual vector $\bra{\psi}\in \mathcal{H}^*$.
+	
+	\begin{definition}[Bra and Ket]
+		Given a Hilbert space $\mathcal{H}$:
+		\begin{enumerate}[label=(\alph*)]
+			\item A \emph{ket} is an element $\ket{\psi}\in\mathcal{H}$.
+			\item Its corresponding \emph{bra} is the unique element $\bra{\psi}\in\mathcal{H}^*$ defined by
+			\[
+			\bra{\psi} : \mathcal{H} \to \mathbb{C}, \quad \bra{\psi}(\ket{\varphi}) = \braket{\psi}{\varphi}.
+			\]
+		\end{enumerate}
+	\end{definition}
+	
+	\begin{remark}
+		The notation explicitly emphasizes the duality between the abstract abelian group (the state space) and its dual space of linear functionals.
+	\end{remark}
+	
+	\section{Superposition and Linear Combinations}
+	The structure of a vector space as an abelian group under addition, coupled with scalar multiplication (the field action), naturally leads to the principle of superposition.
+	
+	\begin{definition}[Superposition Principle]
+		Let $\ket{\psi},\ket{\varphi}\in\mathcal{H}$ and $\alpha,\beta\in\mathbb{C}$. The vector
+		\[
+		\ket{\chi} = \alpha\ket{\psi} + \beta\ket{\varphi}
+		\]
+		is also an element of $\mathcal{H}$. This expresses the fact that $\mathcal{H}$, as an abelian group with a field action, is closed under linear combinations.
+	\end{definition}
+	
+	\begin{example}[Qubit State]
+		In the two-dimensional Hilbert space $\mathbb{C}^2$, a \emph{qubit} is represented by a state
+		\[
+		\ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \quad \alpha,\beta\in\mathbb{C}, \quad |\alpha|^2+|\beta|^2=1,
+		\]
+		where
+		\[
+		\ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}.
+		\]
+	\end{example}
+	
+	\chapter{Linear Operators in the Language of Abstract Algebra}
+	\section{Operators as Endomorphisms}
+	Let $V$ be a vector space over a field $\mathbb{F}$. The set of all linear maps (endomorphisms) from $V$ to itself,
+	\[
+	\operatorname{End}(V) = \{ L: V \to V \mid L \text{ is linear} \},
+	\]
+	forms an $\mathbb{F}$-algebra under pointwise addition and composition.
+	
+	\begin{definition}[Linear Operator]
+		A function $L: V \to V$ is a \emph{linear operator} if for all $x,y\in V$ and $a\in\mathbb{F}$,
+		\[
+		L(x+y) = L(x) + L(y) \quad \text{and} \quad L(a \cdot x) = a \cdot L(x).
+		\]
+	\end{definition}
+	
+	\section{Adjoint Operators and Hermitian Forms}
+	When $V$ is endowed with an inner product, one may define the \emph{adjoint} of an operator.
+	
+	\begin{definition}[Adjoint Operator]
+		Let $L\in \operatorname{End}(V)$, where $V$ is a Hilbert space. The \emph{adjoint} of $L$, denoted $L^\dagger$, is defined by the relation
+		\[
+		\braket{\phi}{L\psi} = \braket{L^\dagger \phi}{\psi}, \quad \forall\, \ket{\phi},\ket{\psi}\in V.
+		\]
+	\end{definition}
+	
+	\begin{definition}[Hermitian Operator]
+		An operator $H\in\operatorname{End}(V)$ is \emph{Hermitian} (or self-adjoint) if
+		\[
+		H^\dagger = H.
+		\]
+	\end{definition}
+	
+	\begin{definition}[Unitary Operator]
+		An operator $U\in\operatorname{End}(V)$ is \emph{unitary} if
+		\[
+		U^\dagger U = U U^\dagger = I,
+		\]
+		where $I$ is the identity endomorphism on $V$.
+	\end{definition}
+	
+	\section{Matrix Representations and Change of Basis}
+	If $V$ is finite-dimensional, fixing a complete orthonormal basis $\{v_i\}_{i=1}^n$, every operator $L\in \operatorname{End}(V)$ is represented by an $n \times n$ matrix whose entries are given by
+	\[
+	L_{ij} = \bra{v_i} L \ket{v_j}.
+	\]
+	A change of basis corresponds to a similarity transformation within the algebra $\operatorname{End}(V)$.
+	
+	\chapter{Tensor Products and Composite Systems}
+	\section{Tensor Product of Modules and Vector Spaces}
+	Let $V$ and $W$ be vector spaces over a field $\mathbb{F}$. Their tensor product $V \otimes W$ is constructed as follows: Consider the free abelian group generated by the Cartesian product $V \times W$, and then impose the bilinearity relations to obtain an $\mathbb{F}$-module. When $\mathbb{F}$ is a field, this module is a vector space.
+	
+	\begin{definition}[Tensor Product]
+		The \emph{tensor product} $V \otimes W$ is the vector space together with a bilinear map
+		\[
+		\otimes: V \times W \to V \otimes W,
+		\]
+		such that for any vector space $U$ and any bilinear map $f: V \times W \to U$, there exists a unique linear map $\tilde{f}: V \otimes W \to U$ satisfying $f(v,w)=\tilde{f}(v\otimes w)$ for all $(v,w)\in V\times W$.
+	\end{definition}
+	
+	\begin{theorem}[Dimension Formula]
+		If $\dim V = n$ and $\dim W = m$, then
+		\[
+		\dim (V \otimes W) = nm.
+		\]
+	\end{theorem}
+	
+	\section{Composite Quantum Systems}
+	In quantum mechanics, composite systems are modeled by tensor products of Hilbert spaces. For instance, a two-qubit system is described by
+	\[
+	\mathcal{H}_{\text{2-qubit}} = \mathbb{C}^2 \otimes \mathbb{C}^2,
+	\]
+	with the basis elements expressed as
+	\[
+	\ket{ij} \coloneqq \ket{i}\otimes \ket{j}, \quad i,j \in \{0,1\}.
+	\]
+	
+	\begin{example}[Two-Qubit State]
+		A general state of a two-qubit system is given by
+		\[
+		\ket{\psi} = \alpha \ket{00} + \beta \ket{01} + \gamma \ket{10} + \delta \ket{11}, \quad \alpha,\beta,\gamma,\delta \in \mathbb{C},
+		\]
+		with the normalization condition
+		\[
+		|\alpha|^2+|\beta|^2+|\gamma|^2+|\delta|^2=1.
+		\]
+	\end{example}
+	
+	\section{Kronecker Product as Matrix Tensor Product}
+	When linear operators on finite-dimensional vector spaces are considered, the matrix representation of the tensor product operator is given by the Kronecker product.
+	
+	\begin{definition}[Kronecker Product]
+		Let
+		\[
+		A \in \mathbb{F}^{n\times m} \quad \text{and} \quad B \in \mathbb{F}^{p\times q}.
+		\]
+		The \emph{Kronecker product} is defined by
+		\[
+		A \otimes B \coloneqq \begin{pmatrix}
+			a_{11}B & a_{12}B & \cdots & a_{1m}B \\
+			a_{21}B & a_{22}B & \cdots & a_{2m}B \\
+			\vdots  & \vdots  & \ddots & \vdots  \\
+			a_{n1}B & a_{n2}B & \cdots & a_{nm}B
+		\end{pmatrix}.
+		\]
+	\end{definition}
+	
+	\begin{proposition}
+		For vectors $\alpha\in\mathbb{F}^n$ and $\beta\in\mathbb{F}^p$, one has
+		\[
+		(A\otimes B)(\alpha\otimes\beta) = (A\alpha)\otimes(B\beta).
+		\]
+	\end{proposition}
+	
+	\chapter{Quantum Observables and Measurement in an Algebraic Framework}
+	\section{Observables as Hermitian Operators}
+	In quantum mechanics, physical observables are represented by Hermitian operators acting on a Hilbert space.
+	
+	\begin{definition}[Observable]
+		An \emph{observable} is a Hermitian operator $H\in\operatorname{End}(\mathcal{H})$, i.e., $H^\dagger = H$. The eigenvalues of $H$ represent the possible outcomes of a measurement.
+	\end{definition}
+	
+	\section{Measurement Postulate}
+	Let $\ket{\psi}\in\mathcal{H}$ be a quantum state and let $H$ be an observable with spectral decomposition
+	\[
+	H = \sum_{\lambda} \lambda\, P_\lambda,
+	\]
+	where $\{P_\lambda\}$ are orthogonal projection operators. Then the probability of obtaining the measurement outcome $\lambda$ is given by
+	\[
+	\Pr(\lambda) = \|P_\lambda \ket{\psi}\|^2,
+	\]
+	and upon measurement, the state collapses to
+	\[
+	\frac{P_\lambda \ket{\psi}}{\|P_\lambda \ket{\psi}\|}.
+	\]
+	
+	\section{The Pauli Matrices}
+	The Pauli matrices provide a concrete example of Hermitian operators on the two-dimensional Hilbert space $\mathbb{C}^2$.
+	
+	\begin{definition}[Pauli Matrices]
+		Define
+		\[
+		\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad
+		\sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}, \quad
+		\sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}.
+		\]
+		These operators are Hermitian and unitary, and they obey the commutation relations
+		\[
+		[\sigma_i,\sigma_j] = 2i\,\epsilon_{ijk}\,\sigma_k,
+		\]
+		where $\epsilon_{ijk}$ is the Levi-Civita symbol.
+	\end{definition}
+	
+	\begin{example}[Eigenvalue Problem for $\sigma_z$]
+		The eigenvalue equation for $\sigma_z$ is
+		\[
+		\sigma_z\ket{\psi} = \lambda\ket{\psi}.
+		\]
+		Direct calculation yields:
+		\begin{itemize}
+			\item $\lambda=1$, with eigenvector $\ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$.
+			\item $\lambda=-1$, with eigenvector $\ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$.
+		\end{itemize}
+		Thus, $\{\ket{0}, \ket{1}\}$ is an orthonormal basis of $\mathbb{C}^2$.
+	\end{example}
+	
+	\chapter{Conclusion and Further Directions}
+	In these notes we have rigorously established the algebraic foundations of quantum mechanics using the language of abstract algebra. We began by defining abelian groups, fields, and modules, thereby presenting vector spaces as abelian groups equipped with a field action. We then developed inner product spaces and Hilbert spaces, introduced Dirac’s bra–ket notation, and treated linear operators (including unitary and Hermitian operators) in an abstract algebraic context. Finally, we examined tensor products, which naturally describe composite quantum systems, and discussed the representation of observables and measurement.
+	
+	This comprehensive treatment lays the groundwork for advanced topics in functional analysis, representation theory, and quantum computation.
+	
+	\backmatter
+	\chapter{References}
+	\begin{enumerate}[label={[\arabic*]}]
+		\item P. Halmos, \emph{Finite-Dimensional Vector Spaces}.
+		\item S. Lang, \emph{Algebra}.
+		\item J. J. Sakurai, \emph{Modern Quantum Mechanics}, Revised Edition.
+		\item A. Messiah, \emph{Quantum Mechanics}.
+		\item J. B. Conway, \emph{A Course in Functional Analysis}.
+	\end{enumerate}
+	
+\end{document}
+
+
+
+%\documentclass[11pt,oneside]{book}
+%\usepackage[a4paper,margin=1in]{geometry}
+%\usepackage{amsmath,amssymb,amsthm,mathtools}
+%\usepackage{physics} % for optional bra-ket commands
+%\usepackage{bm}      % for bold math symbols
+%\usepackage{enumitem}
+%\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+%
+%%------------------------------------------------------------------------------
+%% Theorem-like Environments
+%%------------------------------------------------------------------------------
+%\newtheorem{definition}{Definition}[chapter]
+%\newtheorem{example}{Example}[chapter]
+%\newtheorem{theorem}{Theorem}[chapter]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\theoremstyle{remark}
+%\newtheorem*{remark}{Remark}
+%
+%%------------------------------------------------------------------------------
+%% Custom Commands for Bra-Ket Notation (if not using physics package)
+%%------------------------------------------------------------------------------
+%\renewcommand{\ket}[1]{\left| #1 \right\rangle}
+%\renewcommand{\bra}[1]{\left\langle #1 \right|}
+%\renewcommand{\braket}[2]{\left\langle #1 \middle| #2 \right\rangle}
+%
+%%------------------------------------------------------------------------------
+%% Document Begins
+%%------------------------------------------------------------------------------
+%\begin{document}
+%	
+%	\frontmatter
+%	\title{Advanced Mathematical Foundations of Quantum Mechanics\\[1ex]
+%		\large Detailed Graduate-Level Lecture Notes}
+%	\author{Your Name}
+%	\date{\today}
+%	\maketitle
+%	\tableofcontents
+%	
+%	\mainmatter
+%	
+%	\chapter{Preliminaries: Linear Algebra and Functional Analysis}
+%	\section{Vector Spaces and Basic Properties}
+%	
+%	\begin{definition}[Vector Space]
+%		Let $\mathbb{F}$ denote a field (typically $\mathbb{R}$ or $\mathbb{C}$). A \emph{vector space} $V$ over $\mathbb{F}$ is a non-empty set together with two operations:
+%		\begin{enumerate}[label=(\alph*)]
+%			\item \textbf{Vector Addition:} $+: V \times V \to V$, such that for any $\mathbf{u}, \mathbf{v}\in V$, the sum $\mathbf{u}+\mathbf{v}\in V$.
+%			\item \textbf{Scalar Multiplication:} $\cdot: \mathbb{F} \times V \to V$, such that for any $\alpha\in \mathbb{F}$ and any $\mathbf{v}\in V$, the product $\alpha\,\mathbf{v}\in V$.
+%		\end{enumerate}
+%		These operations satisfy the following axioms for all $\mathbf{u},\mathbf{v},\mathbf{w}\in V$ and $\alpha,\beta \in \mathbb{F}$:
+%		\begin{enumerate}[label=(\roman*)]
+%			\item \emph{Associativity of Addition:} $(\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})$.
+%			\item \emph{Commutativity of Addition:} $\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}$.
+%			\item \emph{Existence of Zero Vector:} There exists a unique $\mathbf{0}\in V$ such that $\mathbf{v} + \mathbf{0} = \mathbf{v}$ for every $\mathbf{v}\in V$.
+%			\item \emph{Existence of Additive Inverses:} For every $\mathbf{v}\in V$, there exists an element $-\mathbf{v}\in V$ satisfying $\mathbf{v}+(-\mathbf{v}) = \mathbf{0}$.
+%			\item \emph{Distributivity of Scalar Multiplication over Vector Addition:} $\alpha(\mathbf{u}+\mathbf{v}) = \alpha\mathbf{u} + \alpha\mathbf{v}$.
+%			\item \emph{Distributivity of Scalar Addition over Vectors:} $(\alpha+\beta)\mathbf{v} = \alpha\mathbf{v} + \beta\mathbf{v}$.
+%			\item \emph{Compatibility of Scalar Multiplication:} $\alpha(\beta\mathbf{v}) = (\alpha\beta)\mathbf{v}$.
+%			\item \emph{Identity Element of Scalar Multiplication:} $1\mathbf{v} = \mathbf{v}$, where $1$ is the multiplicative identity in $\mathbb{F}$.
+%		\end{enumerate}
+%	\end{definition}
+%	
+%	\begin{example}
+%		The set $\mathbb{R}^n$ equipped with the standard addition and scalar multiplication is a vector space over $\mathbb{R}$.
+%	\end{example}
+%	
+%	\section{Inner Product Spaces and Hilbert Spaces}
+%	
+%	\begin{definition}[Inner Product Space]
+%		Let $V$ be a vector space over $\mathbb{F}$ (with $\mathbb{F}=\mathbb{R}$ or $\mathbb{C}$). An \emph{inner product} is a function
+%		\[
+%		\langle \cdot,\cdot\rangle : V \times V \to \mathbb{F},
+%		\]
+%		satisfying for all $\mathbf{u},\mathbf{v},\mathbf{w}\in V$ and $\alpha\in \mathbb{F}$:
+%		\begin{enumerate}[label=(\roman*)]
+%			\item \emph{Conjugate Symmetry:} $\langle \mathbf{u},\mathbf{v} \rangle = \overline{\langle \mathbf{v},\mathbf{u} \rangle}$.
+%			\item \emph{Linearity in the First Argument:} $\langle \alpha \mathbf{u} + \mathbf{v}, \mathbf{w} \rangle = \alpha \langle \mathbf{u},\mathbf{w} \rangle + \langle \mathbf{v},\mathbf{w} \rangle$.
+%			\item \emph{Positive Definiteness:} $\langle \mathbf{v},\mathbf{v} \rangle \ge 0$, and $\langle \mathbf{v},\mathbf{v} \rangle = 0$ if and only if $\mathbf{v}=\mathbf{0}$.
+%		\end{enumerate}
+%		A vector space equipped with such an inner product is called an \emph{inner product space}.
+%	\end{definition}
+%	
+%	\begin{definition}[Hilbert Space]
+%		A \emph{Hilbert space} $\mathcal{H}$ is an inner product space that is complete with respect to the norm induced by the inner product, where the norm is defined by
+%		\[
+%		\|\mathbf{v}\| \coloneqq \sqrt{\langle \mathbf{v},\mathbf{v} \rangle}.
+%		\]
+%		Completeness means that every Cauchy sequence in $\mathcal{H}$ converges to an element in $\mathcal{H}$.
+%	\end{definition}
+%	
+%	\begin{remark}
+%		Hilbert spaces provide the mathematical framework for quantum mechanics, where physical states are represented as unit vectors.
+%	\end{remark}
+%	
+%	\section{Orthonormal Bases and Decomposition}
+%	\begin{definition}[Orthonormal Set]
+%		Let $\mathcal{H}$ be a Hilbert space. A set $\{\ket{v_i}\}_{i\in I} \subset \mathcal{H}$ is said to be \emph{orthonormal} if
+%		\[
+%		\braket{v_i}{v_j} = \delta_{ij}, \quad \text{for all } i,j\in I,
+%		\]
+%		where $\delta_{ij}$ is the Kronecker delta.
+%	\end{definition}
+%	
+%	\begin{definition}[Complete Orthonormal Basis]
+%		An orthonormal set $\{\ket{v_i}\}_{i\in I}$ in $\mathcal{H}$ is a \emph{complete orthonormal basis} if every vector $\ket{\psi}\in\mathcal{H}$ can be expressed uniquely as
+%		\[
+%		\ket{\psi} = \sum_{i\in I} c_i \ket{v_i},
+%		\]
+%		with the coefficients given by
+%		\[
+%		c_i = \braket{v_i}{\psi},
+%		\]
+%		and where the sum converges in the norm induced by the inner product.
+%	\end{definition}
+%	
+%	\begin{example}
+%		In $\mathcal{H} = \mathbb{C}^n$, the standard basis $\{\ket{e_i}\}_{i=1}^n$, where
+%		\[
+%		\ket{e_i} = (0,\dots,0,1,0,\dots,0)^T \quad (\text{$1$ at the $i$th coordinate}),
+%		\]
+%		forms a complete orthonormal basis.
+%	\end{example}
+%	
+%	\chapter{Dirac's Bra-Ket Notation and Quantum States}
+%	\section{Bra-Ket Notation}
+%	\begin{definition}[Kets and Bras]
+%		Let $\mathcal{H}$ be a Hilbert space. A \emph{ket} is an element $\ket{\psi}\in\mathcal{H}$. Its associated \emph{bra} is the element $\bra{\psi}\in\mathcal{H}^*$ (the dual space of $\mathcal{H}$), defined via the inner product by the relation
+%		\[
+%		\bra{\psi}\ket{\varphi} \coloneqq \braket{\psi}{\varphi}, \quad \text{for all } \ket{\varphi}\in \mathcal{H}.
+%		\]
+%	\end{definition}
+%	
+%	\begin{remark}
+%		The notation distinguishes between a state vector $\ket{\psi}$ and the corresponding linear functional $\bra{\psi}$. This duality is essential in quantum mechanics.
+%	\end{remark}
+%	
+%	\section{Superposition Principle}
+%	In quantum mechanics, the superposition principle states that if $\ket{\psi}$ and $\ket{\varphi}$ are two quantum states, then any linear combination
+%	\[
+%	\ket{\chi} = \alpha \ket{\psi} + \beta \ket{\varphi}, \quad \alpha,\beta \in \mathbb{C},
+%	\]
+%	(with appropriate normalization) is also a quantum state.
+%	
+%	\begin{example}[Qubit State]
+%		A \emph{qubit} is a state in the two-dimensional Hilbert space $\mathbb{C}^2$. It is typically represented as
+%		\[
+%		\ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \quad \alpha,\beta\in\mathbb{C}, \quad |\alpha|^2+|\beta|^2=1,
+%		\]
+%		where we choose
+%		\[
+%		\ket{0} \coloneqq \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} \coloneqq \begin{pmatrix} 0 \\ 1 \end{pmatrix}.
+%		\]
+%	\end{example}
+%	
+%	\chapter{Linear Operators on Hilbert Spaces}
+%	\section{Definition and Properties}
+%	\begin{definition}[Linear Operator]
+%		Let $\mathcal{H}$ be a Hilbert space. An operator $L: \mathcal{H}\to\mathcal{H}$ is said to be \emph{linear} if for every $\ket{\psi},\ket{\varphi}\in\mathcal{H}$ and every $z\in\mathbb{C}$, the following properties hold:
+%		\[
+%		L(\ket{\psi}+\ket{\varphi}) = L\ket{\psi} + L\ket{\varphi}, \quad L(z\ket{\psi}) = zL\ket{\psi}.
+%		\]
+%	\end{definition}
+%	
+%	\begin{remark}
+%		In finite dimensions, every linear operator can be represented by a matrix with respect to an orthonormal basis.
+%	\end{remark}
+%	
+%	\section{Matrix Representation}
+%	Let $\{\ket{v_i}\}_{i=1}^n$ be a complete orthonormal basis for $\mathcal{H}$, and let $L$ be a linear operator on $\mathcal{H}$. Then the \emph{matrix elements} of $L$ are given by
+%	\[
+%	L_{ij} \coloneqq \bra{v_i}L\ket{v_j}, \quad 1\le i,j\le n.
+%	\]
+%	Thus, if a state $\ket{\psi}\in\mathcal{H}$ is expressed as
+%	\[
+%	\ket{\psi} = \sum_{j=1}^n c_j \ket{v_j},
+%	\]
+%	then
+%	\[
+%	L\ket{\psi} = \sum_{i=1}^n \left( \sum_{j=1}^n L_{ij} c_j \right) \ket{v_i}.
+%	\]
+%	
+%	\section{Adjoint and Hermitian Conjugate}
+%	\begin{definition}[Adjoint Operator]
+%		For a linear operator $L: \mathcal{H}\to\mathcal{H}$, the \emph{adjoint} operator $L^\dagger$ is the unique operator satisfying
+%		\[
+%		\bra{\phi}L\ket{\psi} = \overline{\bra{\psi}L^\dagger\ket{\phi}}, \quad \text{for all } \ket{\phi},\ket{\psi}\in\mathcal{H}.
+%		\]
+%	\end{definition}
+%	
+%	\section{Unitary and Hermitian Operators}
+%	\begin{definition}[Unitary Operator]
+%		A linear operator $U: \mathcal{H}\to\mathcal{H}$ is \emph{unitary} if
+%		\[
+%		U^\dagger U = U U^\dagger = I,
+%		\]
+%		where $I$ is the identity operator on $\mathcal{H}$.
+%	\end{definition}
+%	
+%	\begin{definition}[Hermitian Operator]
+%		A linear operator $H: \mathcal{H}\to\mathcal{H}$ is \emph{Hermitian} (or self-adjoint) if
+%		\[
+%		H^\dagger = H.
+%		\]
+%	\end{definition}
+%	
+%	\begin{remark}
+%		Observables in quantum mechanics are represented by Hermitian operators since their eigenvalues are guaranteed to be real.
+%	\end{remark}
+%	
+%	\section{The Eigenvalue Problem}
+%	Given a linear operator $A: \mathcal{H}\to\mathcal{H}$, the eigenvalue problem is to find $\lambda \in \mathbb{C}$ and a nonzero vector $\ket{\psi}\in\mathcal{H}$ such that
+%	\[
+%	A\ket{\psi} = \lambda \ket{\psi}.
+%	\]
+%	Here, $\lambda$ is called an \emph{eigenvalue} of $A$, and $\ket{\psi}$ is the corresponding \emph{eigenvector}.
+%	
+%	\chapter{Tensor Product Spaces and Composite Quantum Systems}
+%	\section{Tensor Product of Hilbert Spaces}
+%	\begin{definition}[Tensor Product Space]
+%		Let $\mathcal{H}_1$ and $\mathcal{H}_2$ be Hilbert spaces. Their \emph{tensor product} $\mathcal{H}_1 \otimes \mathcal{H}_2$ is defined as the Hilbert space spanned by elementary tensors $\ket{\psi}\otimes\ket{\varphi}$, where $\ket{\psi}\in\mathcal{H}_1$ and $\ket{\varphi}\in\mathcal{H}_2$. This product is extended bilinearly; that is, for any $\alpha,\beta\in\mathbb{C}$ and vectors $\ket{\psi_1},\ket{\psi_2}\in\mathcal{H}_1$, $\ket{\varphi}\in\mathcal{H}_2$, we have
+%		\[
+%		\left(\alpha\ket{\psi_1} + \beta\ket{\psi_2}\right) \otimes \ket{\varphi} = \alpha\left(\ket{\psi_1}\otimes\ket{\varphi}\right) + \beta\left(\ket{\psi_2}\otimes\ket{\varphi}\right),
+%		\]
+%		with a similar relation in the second argument.
+%	\end{definition}
+%	
+%	\begin{theorem}[Dimension of Tensor Product Space]
+%		Let $\dim \mathcal{H}_1 = n$ and $\dim \mathcal{H}_2 = m$. Then,
+%		\[
+%		\dim (\mathcal{H}_1 \otimes \mathcal{H}_2) = nm.
+%		\]
+%	\end{theorem}
+%	\begin{proof}
+%		If $\{\ket{v_i}\}_{i=1}^n$ and $\{\ket{w_j}\}_{j=1}^m$ are complete orthonormal bases for $\mathcal{H}_1$ and $\mathcal{H}_2$, respectively, then the set
+%		\[
+%		\{ \ket{v_i} \otimes \ket{w_j} \mid 1\le i\le n,\,1\le j\le m \}
+%		\]
+%		is a complete orthonormal basis for $\mathcal{H}_1 \otimes \mathcal{H}_2$, yielding the stated dimension.
+%	\end{proof}
+%	
+%	\section{Multi-Qubit States}
+%	A two-qubit system is modeled by the Hilbert space $\mathbb{C}^2 \otimes \mathbb{C}^2\cong \mathbb{C}^4$. A general two-qubit state is expressed as
+%	\[
+%	\ket{\psi} = \alpha \ket{00} + \beta \ket{01} + \gamma \ket{10} + \delta \ket{11}, \quad \alpha,\beta,\gamma,\delta \in \mathbb{C},
+%	\]
+%	with the normalization condition
+%	\[
+%	|\alpha|^2 + |\beta|^2 + |\gamma|^2 + |\delta|^2 = 1.
+%	\]
+%	Here, the notation
+%	\[
+%	\ket{ij} \coloneqq \ket{i} \otimes \ket{j}, \quad i,j\in\{0,1\},
+%	\]
+%	is adopted.
+%	
+%	\section{Kronecker Product of Matrices}
+%	\begin{definition}[Kronecker Product]
+%		Let
+%		\[
+%		A = \begin{pmatrix}
+%			a_{11} & a_{12} & \cdots & a_{1m} \\
+%			a_{21} & a_{22} & \cdots & a_{2m} \\
+%			\vdots & \vdots & \ddots & \vdots \\
+%			a_{n1} & a_{n2} & \cdots & a_{nm}
+%		\end{pmatrix}
+%		\quad \text{and} \quad
+%		B = \begin{pmatrix}
+%			b_{11} & b_{12} & \cdots & b_{1q} \\
+%			b_{21} & b_{22} & \cdots & b_{2q} \\
+%			\vdots & \vdots & \ddots & \vdots \\
+%			b_{p1} & b_{p2} & \cdots & b_{pq}
+%		\end{pmatrix}.
+%		\]
+%		Their \emph{Kronecker product} is defined as
+%		\[
+%		A\otimes B \coloneqq
+%		\begin{pmatrix}
+%			a_{11}B & a_{12}B & \cdots & a_{1m}B \\
+%			a_{21}B & a_{22}B & \cdots & a_{2m}B \\
+%			\vdots  & \vdots  & \ddots & \vdots  \\
+%			a_{n1}B & a_{n2}B & \cdots & a_{nm}B
+%		\end{pmatrix}.
+%		\]
+%	\end{definition}
+%	
+%	\begin{proposition}[Action on Tensor Product Vectors]
+%		Let $\alpha$ and $\beta$ be column vectors. Then for matrices $A$ and $B$,
+%		\[
+%		(A\otimes B)(\alpha\otimes\beta) = (A\alpha)\otimes(B\beta).
+%		\]
+%	\end{proposition}
+%	\begin{proof}
+%		The result follows directly from the bilinearity of the tensor product and the definition of the Kronecker product.
+%	\end{proof}
+%	
+%	\chapter{Applications to Quantum Mechanics}
+%	\section{Quantum Observables and Measurement}
+%	Physical observables in quantum mechanics are represented by Hermitian operators on a Hilbert space. According to the postulates of quantum mechanics, if an observable corresponding to a Hermitian operator $H$ is measured in the state $\ket{\psi}$, the possible outcomes are the eigenvalues of $H$. Moreover, if $\lambda$ is an eigenvalue and $P_\lambda$ is the orthogonal projector onto the corresponding eigenspace, then the probability of obtaining $\lambda$ is
+%	\[
+%	P(\lambda) = \|P_\lambda\ket{\psi}\|^2.
+%	\]
+%	
+%	\section{Example: The Pauli Operators}
+%	The Pauli matrices are fundamental Hermitian operators acting on $\mathbb{C}^2$. They are defined as:
+%	\[
+%	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad
+%	\sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}, \quad
+%	\sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}.
+%	\]
+%	They satisfy the commutation relations:
+%	\[
+%	[\sigma_i,\sigma_j] = 2i\,\epsilon_{ijk}\,\sigma_k,
+%	\]
+%	where $\epsilon_{ijk}$ is the Levi-Civita symbol.
+%	
+%	\begin{example}[Eigenvalue Problem for $\sigma_z$]
+%		Consider the operator $\sigma_z$. Its eigenvalue equation is
+%		\[
+%		\sigma_z\ket{\psi} = \lambda\ket{\psi}.
+%		\]
+%		Direct computation shows:
+%		\begin{itemize}
+%			\item For $\lambda = 1$, a normalized eigenvector is
+%			\[
+%			\ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}.
+%			\]
+%			\item For $\lambda = -1$, a normalized eigenvector is
+%			\[
+%			\ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}.
+%			\]
+%		\end{itemize}
+%		Thus, $\sigma_z$ has eigenvalues $\pm 1$, and $\{\ket{0},\ket{1}\}$ forms an orthonormal basis for $\mathbb{C}^2$.
+%	\end{example}
+%	
+%	\chapter{Summary and Outlook}
+%	In these lecture notes we have meticulously built the mathematical foundation necessary for quantum mechanics. Beginning with vector spaces and progressing to Hilbert spaces, we established the concept of an inner product, defined orthonormal bases, and developed Dirac’s bra–ket notation. We then rigorously introduced linear operators, discussed their matrix representations and adjoints, and defined unitary and Hermitian operators—the latter representing quantum observables. Finally, we explored tensor product spaces and the Kronecker product, which allow us to describe composite quantum systems such as multi-qubit states.
+%	
+%	This thorough treatment sets the stage for more advanced topics in quantum theory, including spectral theory, quantum computation, and further studies in functional analysis.
+%	
+%	\backmatter
+%	\chapter{References}
+%	\begin{enumerate}[label={[\arabic*]}]
+%		\item J. J. Sakurai, \emph{Modern Quantum Mechanics}, Revised Edition.
+%		\item A. Messiah, \emph{Quantum Mechanics}.
+%		\item P. Halmos, \emph{Finite-Dimensional Vector Spaces}.
+%		\item J. B. Conway, \emph{A Course in Functional Analysis}.
+%	\end{enumerate}
+%	
+%\end{document}
+
+
+
+%\documentclass[11pt,oneside]{book}
+%\usepackage[a4paper,margin=1in]{geometry}
+%\usepackage{amsmath, amssymb, amsthm, mathtools}
+%\usepackage{physics} % for bra-ket notation (optional)
+%\usepackage{bm}      % for bold math symbols
+%\usepackage{enumitem}
+%\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+%
+%% Theorem-like environments
+%\newtheorem{definition}{Definition}[chapter]
+%\newtheorem{theorem}{Theorem}[chapter]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{corollary}[theorem]{Corollary}
+%\theoremstyle{remark}
+%\newtheorem*{remark}{Remark}
+%\theoremstyle{example}
+%\newtheorem{example}{Example}[chapter]
+%
+%% Custom commands for bra-ket if not using the physics package
+%\renewcommand{\ket}[1]{\left| #1 \right\rangle}
+%\renewcommand{\bra}[1]{\left\langle #1 \right|}
+%\renewcommand{\braket}[2]{\left\langle #1 \middle| #2 \right\rangle}
+%
+%\begin{document}
+%	
+%	\frontmatter
+%	\title{Quantum Mechanics and Linear Algebra\\[1ex]
+%		\large Graduate-Level Lecture Notes}
+%	\author{Your Name}
+%	\date{\today}
+%	\maketitle
+%	\tableofcontents
+%	
+%	\mainmatter
+%	
+%	\chapter{Introduction}
+%	\section{Overview}
+%	In these notes we develop the mathematical framework underlying quantum mechanics, emphasizing the role of linear algebra. Central to our discussion is the notion of a Hilbert space, the use of Dirac's bra-ket notation, and the theory of linear operators including unitary and Hermitian operators. We also discuss tensor product spaces and their role in describing multi-qubit systems.
+%	
+%	\chapter{Hilbert Spaces and Quantum States}
+%	\section{Hilbert Spaces}
+%	\begin{definition}[Hilbert Space]
+%		A \emph{Hilbert space} $\mathcal{H}$ is a vector space over the field $\mathbb{C}$ (or $\mathbb{R}$) equipped with an inner product 
+%		\[
+%		\langle \psi, \varphi \rangle,
+%		\]
+%		such that $\mathcal{H}$ is complete with respect to the norm 
+%		\[
+%		\|\psi\| = \sqrt{\langle \psi, \psi \rangle}.
+%		\]
+%	\end{definition}
+%	
+%	\section{Dirac's Bra-Ket Notation}
+%	A standard notation in quantum mechanics is Dirac's bra-ket notation.
+%	\begin{definition}[Bra-Ket Notation]
+%		Let $\mathcal{H}$ be a Hilbert space. For every vector $\ket{\psi} \in \mathcal{H}$, its dual vector is denoted by $\bra{\psi} \in \mathcal{H}^*$, and the inner product of $\ket{\psi}$ and $\ket{\varphi}$ is written as
+%		\[
+%		\braket{\psi}{\varphi}.
+%		\]
+%	\end{definition}
+%	Thus, the linearity of quantum states is expressed by
+%	\[
+%	z_1\ket{v_1} + z_2\ket{v_2} \in \mathcal{H}, \quad \forall\, z_1,z_2\in \mathbb{C}.
+%	\]
+%	
+%	\section{Qubits and Superposition}
+%	\begin{definition}[Qubit]
+%		A \emph{qubit} is a quantum state represented by a unit vector in a two-dimensional Hilbert space. It is typically expressed as
+%		\[
+%		\ket{\psi} = \alpha \ket{0} + \beta \ket{1}, \quad \alpha,\beta\in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1,
+%		\]
+%		where
+%		\[
+%		\ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}.
+%		\]
+%	\end{definition}
+%	This representation embodies the principle of superposition: a quantum state may be expressed as a linear combination of basis states.
+%	
+%	\section{Linear Independence and Orthonormal Bases}
+%	\begin{definition}[Linear Independence]
+%		A set of vectors $\{\ket{\psi_i}\}_{i=1}^n \subset \mathcal{H}$ is said to be \emph{linearly independent} if
+%		\[
+%		\sum_{i=1}^n c_i \ket{\psi_i} = \mathbf{0} \quad \Longrightarrow \quad c_i = 0 \text{ for all } i.
+%		\]
+%	\end{definition}
+%	\begin{definition}[Orthonormal Basis]
+%		A set $\{\ket{\psi_i}\}_{i=1}^n$ forms an \emph{orthonormal basis} for $\mathcal{H}$ if
+%		\[
+%		\braket{\psi_i}{\psi_j} = \delta_{ij} \quad \text{and} \quad \mathcal{H} = \operatorname{span}\{\ket{\psi_i}\}_{i=1}^n.
+%		\]
+%	\end{definition}
+%	
+%	\chapter{Linear Operators and Matrix Representations}
+%	\section{Linear Operators}
+%	\begin{definition}[Linear Operator]
+%		An operator $L : \mathcal{H} \to \mathcal{H}$ is said to be \emph{linear} if for all $\ket{\psi},\ket{\varphi}\in\mathcal{H}$ and for every $z\in\mathbb{C}$,
+%		\[
+%		L\bigl(\ket{\psi} + \ket{\varphi}\bigr) = L\ket{\psi} + L\ket{\varphi} \quad \text{and} \quad L\bigl(z\ket{\psi}\bigr) = z L\ket{\psi}.
+%		\]
+%	\end{definition}
+%	
+%	\section{Unitary and Hermitian Operators}
+%	\begin{definition}[Unitary Operator]
+%		An operator $U : \mathcal{H} \to \mathcal{H}$ is called \emph{unitary} if
+%		\[
+%		U^\dagger U = U U^\dagger = I,
+%		\]
+%		where $U^\dagger$ denotes the Hermitian (or conjugate) transpose of $U$, and $I$ is the identity operator.
+%	\end{definition}
+%	\begin{definition}[Hermitian Operator]
+%		An operator $H : \mathcal{H} \to \mathcal{H}$ is called \emph{Hermitian} if
+%		\[
+%		H^\dagger = H.
+%		\]
+%	\end{definition}
+%	\begin{remark}
+%		For a Hermitian operator, all eigenvalues are real, and eigenvectors corresponding to distinct eigenvalues are orthogonal.
+%	\end{remark}
+%	
+%	\section{Eigenvalues and Eigenvectors}
+%	For a linear operator $A : \mathcal{H} \to \mathcal{H}$, the \emph{eigenvalue problem} is to find $\lambda \in \mathbb{C}$ and a nonzero vector $\ket{\psi}\in \mathcal{H}$ such that
+%	\[
+%	A\ket{\psi} = \lambda \ket{\psi}.
+%	\]
+%	Here, $\lambda$ is called an \emph{eigenvalue} and $\ket{\psi}$ is a corresponding \emph{eigenvector}.
+%	
+%	\chapter{Tensor Product Spaces and Multi-Qubit Systems}
+%	\section{Tensor Product of Hilbert Spaces}
+%	Given two Hilbert spaces $\mathcal{H}_1$ and $\mathcal{H}_2$, their tensor product $\mathcal{H}_1 \otimes \mathcal{H}_2$ is the Hilbert space spanned by the set of vectors of the form
+%	\[
+%	\ket{\psi}\otimes\ket{\varphi}, \quad \ket{\psi}\in \mathcal{H}_1,\ \ket{\varphi}\in \mathcal{H}_2.
+%	\]
+%	If $\{\ket{v_i}\}$ and $\{\ket{w_j}\}$ are orthonormal bases for $\mathcal{H}_1$ and $\mathcal{H}_2$, respectively, then the set 
+%	\[
+%	\{\ket{v_i}\otimes\ket{w_j}\}_{i,j}
+%	\]
+%	forms an orthonormal basis for $\mathcal{H}_1\otimes\mathcal{H}_2$.
+%	
+%	\section{Multi-Qubit States}
+%	A state of a composite quantum system (e.g., a two-qubit system) is described by a vector in the tensor product space $\mathbb{C}^2\otimes \mathbb{C}^2$. For example, a general two-qubit state can be written as
+%	\[
+%	\ket{\psi} = \alpha \ket{00} + \beta \ket{01} + \gamma \ket{10} + \delta \ket{11}, \quad \alpha,\beta,\gamma,\delta\in\mathbb{C},
+%	\]
+%	with the normalization condition
+%	\[
+%	|\alpha|^2 + |\beta|^2 + |\gamma|^2 + |\delta|^2 = 1.
+%	\]
+%	Here, we adopt the convention
+%	\[
+%	\ket{ij} \coloneqq \ket{i}\otimes\ket{j}, \quad i,j\in\{0,1\}.
+%	\]
+%	
+%	\section{Kronecker Product of Matrices}
+%	The matrix representation of operators on tensor product spaces is given by the \emph{Kronecker product}. If 
+%	\[
+%	A = \begin{pmatrix} a_{11} & \cdots & a_{1m} \\ \vdots & \ddots & \vdots \\ a_{n1} & \cdots & a_{nm} \end{pmatrix}
+%	\quad \text{and} \quad
+%	B = \begin{pmatrix} b_{11} & \cdots & b_{1q} \\ \vdots & \ddots & \vdots \\ b_{p1} & \cdots & b_{pq} \end{pmatrix},
+%	\]
+%	then their Kronecker product is the $(np)\times(mq)$ matrix
+%	\[
+%	A \otimes B \coloneqq 
+%	\begin{pmatrix}
+%		a_{11}B & \cdots & a_{1m}B \\
+%		\vdots & \ddots & \vdots \\
+%		a_{n1}B & \cdots & a_{nm}B
+%	\end{pmatrix}.
+%	\]
+%	This operation satisfies the property
+%	\[
+%	(A\otimes B)(\alpha\otimes\beta) = (A\alpha) \otimes (B\beta),
+%	\]
+%	for any column vectors $\alpha$ and $\beta$.
+%	
+%	\chapter{Conclusion}
+%	In these notes we have laid the foundational mathematical structures underlying quantum mechanics. By formalizing Hilbert spaces, introducing Dirac's bra-ket notation, and rigorously defining linear operators—including unitary and Hermitian operators—we bridge the gap between abstract linear algebra and its applications in quantum theory. Tensor product spaces further allow us to rigorously describe multi-qubit systems, a cornerstone in the theory of quantum computation.
+%	
+%	\backmatter
+%	\chapter{References}
+%	\begin{itemize}[leftmargin=*,labelsep=5mm]
+%		\item J. J. Sakurai, \emph{Modern Quantum Mechanics}, Revised Edition.
+%		\item A. Messiah, \emph{Quantum Mechanics}.
+%		\item P. Halmos, \emph{Finite-Dimensional Vector Spaces}.
+%		\item Additional literature on functional analysis and operator theory.
+%	\end{itemize}
+%	
+%\end{document}

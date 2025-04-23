@@ -1,0 +1,183 @@
+\documentclass[12pt,oneside]{book}
+
+\usepackage[utf8]{inputenc}      % Unicode support
+\usepackage[T1]{fontenc}         % Font encoding
+\usepackage{lmodern}             % Modern font
+\usepackage{amsmath,amssymb,amsthm,mathtools} % Math packages
+\usepackage{physics}             % For quantum notation (braket, etc.)
+\usepackage{braket}              % Dirac notation
+\usepackage{enumitem}            % For customized lists
+\usepackage{hyperref}            % Hyperlinks in PDF
+\usepackage{fullpage}            % Smaller margins
+\usepackage{graphicx}            % For graphics if needed
+\usepackage{tikz}                % For diagrams (if required)
+\usepackage{caption}
+
+% Theorem and Definition environments
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{note}[theorem]{Note}
+
+\title{Advanced Lecture Notes in Linear Algebra and Quantum Mechanics}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+	
+	\maketitle
+	\tableofcontents
+	
+	\mainmatter
+	
+	\chapter{Advanced Linear Algebra}
+	
+	\section{Unitary Operators}
+	
+	A linear operator \( U \) on a Hilbert space \( \mathcal{V} \) is said to be \emph{unitary} if it preserves the inner product:
+	\[
+	\langle U\psi,\, U\phi \rangle = \langle \psi,\, \phi \rangle \quad \text{for all } \psi,\, \phi \in \mathcal{V}.
+	\]
+	Equivalently, \( U \) is unitary if and only if
+	\[
+	U^\dagger U = UU^\dagger = I,
+	\]
+	where \( U^\dagger \) denotes the adjoint (conjugate transpose) of \( U \) and \( I \) is the identity operator on \( \mathcal{V} \). Such operators are both norm-preserving and invertible.
+	
+	\begin{remark}
+		Unitary operators serve as transformations between orthonormal bases. If \( U \) maps an orthonormal basis \( \{\ket{v_i}\} \) to \( \{\ket{w_i}\} \) via 
+		\[
+		\ket{w_i} = U\ket{v_i},
+		\]
+		the norm preservation guarantees that the \( \{\ket{w_i}\} \) remain orthonormal.
+	\end{remark}
+	
+	\section{Eigenvalues and Eigenvectors}
+	
+	Let \( A \) be a linear operator on a finite-dimensional vector space \( \mathcal{V} \) over \( \mathbb{C} \). An \emph{eigenvalue} \( \lambda \in \mathbb{C} \) and its corresponding nonzero \emph{eigenvector} \( \ket{a} \in \mathcal{V} \) satisfy
+	\[
+	A\ket{a} = \lambda \ket{a}.
+	\]
+	This is known as the \emph{eigenvalue equation}.
+	
+	\subsection{Eigenvalues of Unitary Operators}
+	
+	If \( U \) is a unitary operator, then for any eigenpair \( (\lambda, \ket{u}) \) satisfying
+	\[
+	U\ket{u} = \lambda \ket{u},
+	\]
+	it follows that
+	\[
+	|\lambda| = 1,
+	\]
+	so that \( \lambda \) can be written in the form
+	\[
+	\lambda = e^{i\phi}, \quad \phi\in\mathbb{R}.
+	\]
+	
+	\subsection{Eigenvalues and Eigenvectors of Hermitian Operators}
+	
+	An operator \( H \) is called \emph{Hermitian} (or self-adjoint) if \( H = H^\dagger \). Hermitian operators have the following properties:
+	\begin{enumerate}[label=(\roman*)]
+		\item Every eigenvalue is real; that is, if \( H\ket{h} = h\ket{h} \), then \( h\in\mathbb{R} \).
+		\item Eigenvectors corresponding to distinct eigenvalues are orthogonal.
+		\item The set of eigenvectors forms an orthonormal basis for \( \mathcal{V} \).
+	\end{enumerate}
+	Thus, any vector \( \ket{\psi} \in \mathcal{V} \) can be expanded as
+	\[
+	\ket{\psi} = \sum_i c_i \ket{h_i}, \quad \text{with } \sum_i |c_i|^2 = 1.
+	\]
+	
+	\chapter{Fundamentals of Quantum Mechanics}
+	
+	\section{Quantum States and Hilbert Spaces}
+	
+	In quantum mechanics, the state of a system is represented by a vector (or \emph{state vector}) in a Hilbert space \( \mathcal{H} \). These vectors are normalized:
+	\[
+	\langle \psi | \psi \rangle = 1.
+	\]
+	The state vector \( \ket{\psi} \) contains all information about the quantum system.
+	
+	\begin{definition}[Quantum Superposition]
+		If \( \ket{\psi} \) and \( \ket{\phi} \) are valid state vectors, then any linear combination
+		\[
+		\ket{\chi} = \alpha \ket{\psi} + \beta \ket{\phi}, \quad \alpha,\,\beta \in \mathbb{C},
+		\]
+		with \( \langle \chi | \chi \rangle = 1 \), is also a valid quantum state.
+	\end{definition}
+	
+	\section{Quantum Measurement and State Collapse}
+	
+	Let \( A \) be an observable represented by a Hermitian operator with eigenvalue equation
+	\[
+	A \ket{a} = a \ket{a}.
+	\]
+	Upon measuring the observable \( A \) in the state \( \ket{\psi} \), the only possible outcomes are the eigenvalues \( a \). The probability of obtaining the outcome \( a \) is given by
+	\[
+	P(a) = |\langle a | \psi \rangle|^2.
+	\]
+	After a measurement yielding \( a \), the state vector \(\ket{\psi}\) collapses to the eigenstate \( \ket{a} \).
+	
+	\section{Qubits: Two-Level Quantum Systems}
+	
+	A \emph{qubit} is the simplest quantum system, represented by a state in a two-dimensional Hilbert space. Choosing the standard computational basis \( \{ \ket{0}, \ket{1} \} \), any qubit state can be written as
+	\[
+	\ket{\psi} = \alpha \ket{0} + \beta \ket{1}, \quad \alpha,\beta\in\mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1.
+	\]
+	A measurement in this basis yields \( \ket{0} \) with probability \( |\alpha|^2 \) and \( \ket{1} \) with probability \( |\beta|^2 \).
+	
+	\subsection{Matrix Representation and Pauli Matrices}
+	
+	In the computational basis, we have the representations:
+	\[
+	\ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}.
+	\]
+	The Pauli matrices, which are fundamental in describing qubit operations, are given by:
+	\[
+	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix},\quad
+	\sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix},\quad
+	\sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}.
+	\]
+	They satisfy the commutation relations:
+	\[
+	[\sigma_x,\sigma_y] = 2i\,\sigma_z, \quad
+	[\sigma_y,\sigma_z] = 2i\,\sigma_x, \quad
+	[\sigma_z,\sigma_x] = 2i\,\sigma_y,
+	\]
+	and the anticommutation relations:
+	\[
+	\{\sigma_x,\sigma_y\} = 0, \quad
+	\{\sigma_y,\sigma_z\} = 0, \quad
+	\{\sigma_z,\sigma_x\} = 0.
+	\]
+	Together with the identity matrix \( I \), these matrices form a basis for the space of \( 2\times 2 \) complex matrices.
+	
+	\subsection{The Bloch Sphere}
+	
+	A general qubit state can be parametrized as
+	\[
+	\ket{\psi} = \cos\frac{\theta}{2}\ket{0} + e^{i\phi}\sin\frac{\theta}{2}\ket{1}, \quad 0\le\theta\le\pi,\; 0\le\phi<2\pi.
+	\]
+	This representation maps the state of the qubit to a point on the surface of the unit sphere (the \emph{Bloch sphere}) in \(\mathbb{R}^3\). The angles \( \theta \) and \( \phi \) represent the polar and azimuthal angles, respectively. Notably, two qubit states are orthogonal if and only if they are located at diametrically opposite points on the Bloch sphere.
+	
+	\begin{remark}
+		The global phase of a qubit state is physically irrelevant; only the relative phase between the basis components affects the state.
+	\end{remark}
+	
+	\chapter{Conclusion}
+	
+	These lecture notes have provided an in-depth and rigorous treatment of topics in advanced linear algebra and quantum mechanics. We examined the structure of unitary and Hermitian operators, discussed eigenvalue problems, and developed the formalism of quantum states and qubits. Such a detailed presentation forms the mathematical backbone for further studies in quantum information theory and quantum computing.
+	
+	\backmatter
+	
+	\chapter*{References}
+	\addcontentsline{toc}{chapter}{References}
+	% Add bibliographic entries here if needed.
+	
+\end{document}

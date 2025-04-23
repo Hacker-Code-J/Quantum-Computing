@@ -1,0 +1,234 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,oneside]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{physics}       % For bra-ket notation.
+\usepackage{bm}            % Bold math symbols.
+\usepackage{enumitem}      % More customization for lists.
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{tikz}          % For circuit or diagram drawings.
+\usetikzlibrary{quantikz}  % For drawing quantum circuits.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theorem-like environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\ket}[1]{\left|#1\right\rangle}      % Dirac ket notation.
+\renewcommand{\bra}[1]{\left\langle#1\right|}      % Dirac bra notation.
+\renewcommand{\braket}[2]{\left\langle#1\,\middle|\,#2\right\rangle} % Inner product.
+\newcommand{\xor}{\oplus}                        % XOR symbol.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document begins
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	
+	\frontmatter
+	\title{The Deutsch--Jozsa Algorithm:\\ 
+		An Algebraic and Quantum Computational Perspective}
+	\author{Your Name}
+	\date{\today}
+	\maketitle
+	\tableofcontents
+	
+	\mainmatter
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{Introduction and Preliminaries}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\section{Classical versus Quantum Encoding}
+	
+	In classical computing an encoding is a mapping from data in one representation to another (e.g., from text to binary) and typically comes with a corresponding decoding function. Such mappings may be irreversible (e.g., many hash functions) or reversible (e.g., lossless compression). In quantum computing, however, every operation (apart from measurement) must be reversible; that is, it must be described by a unitary operator. Therefore, any classical function \( f \) is embedded into a reversible process by extending its domain with ancillary bits or qubits.
+	
+	\begin{definition}[Reversible Embedding of a Function]
+		Let \( f : \{0,1\}^n \to \{0,1\} \) be a classical Boolean function. Its reversible (or unitary) extension is given by the oracle 
+		\[
+		U_f : \ket{x}\ket{y} \mapsto \ket{x}\ket{y \xor f(x)},
+		\]
+		where \( x \in \{0,1\}^n \) and \( y \in \{0,1\} \). The XOR (exclusive OR) operation ensures that this mapping is bijective, even if \( f \) is many-to-one.
+	\end{definition}
+	
+	\begin{remark}
+		This reversible embedding is essential for quantum computation because it allows one to “undo” the operation if necessary, preserving unitarity and enabling interference.
+	\end{remark}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section{Quantum Superposition and Phase}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	A key feature of quantum encoding is that information is stored not only in the probabilities (amplitudes) of basis states but also in their relative phases.
+	
+	\begin{definition}[Quantum State and Superposition]
+		A quantum state in a Hilbert space \( \mathcal{H} \) is a unit vector \( \ket{\psi} \in \mathcal{H} \). The principle of superposition states that if \( \ket{\psi} \) and \( \ket{\varphi} \) are two states, then 
+		\[
+		\alpha \ket{\psi} + \beta \ket{\varphi} \in \mathcal{H} \quad \text{for any } \alpha, \beta \in \mathbb{C}
+		\]
+		(with normalization).
+	\end{definition}
+	
+	\begin{remark}
+		Unlike classical bits, qubits may be in superpositions of \( \ket{0} \) and \( \ket{1} \) with complex coefficients. The phase of these coefficients, although not directly observable, is crucial in interference effects that yield the quantum advantage.
+	\end{remark}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{The Deutsch--Jozsa Problem}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\section{Problem Statement}
+	
+	Let \( f : \{0,1\}^n \to \{0,1\} \) be a Boolean function promised to be either \emph{constant} or \emph{balanced}. 
+	
+	\begin{definition}[Constant and Balanced Functions]
+		\begin{itemize}[leftmargin=*, labelsep=5mm]
+			\item \( f \) is \emph{constant} if \( f(x)=c \) for all \( x \in \{0,1\}^n \) with \( c\in\{0,1\} \).
+			\item \( f \) is \emph{balanced} if \( f(x)=0 \) for exactly half of the inputs and \( f(x)=1 \) for the other half.
+		\end{itemize}
+	\end{definition}
+	
+	In classical computing, to decide whether \( f \) is constant or balanced in the worst case, one must evaluate \( f \) on \(\frac{2^n}{2} + 1\) inputs (exponential in \( n \)). The Deutsch--Jozsa algorithm, however, can determine this with a single evaluation of the quantum oracle \( U_f \).
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section{Quantum Oracle for \( f \)}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	We encode \( f \) in a reversible way via the unitary operator
+	\[
+	U_f : \ket{x}\ket{y} \mapsto \ket{x}\ket{y \xor f(x)}.
+	\]
+	For our purposes, we prepare the ancilla (target) qubit in the state
+	\[
+	\ket{-} = \frac{1}{\sqrt{2}} \left( \ket{0} - \ket{1} \right).
+	\]
+	Thus, one can show that
+	\[
+	U_f \ket{x}\ket{-} = (-1)^{f(x)} \ket{x}\ket{-}.
+	\]
+	This phenomenon is known as \emph{phase kickback}. The function value \( f(x) \) is now encoded into the phase \( (-1)^{f(x)} \) on the state \( \ket{x} \), rather than changing the value of the ancilla.
+	
+	\begin{remark}[Phase Kickback]
+		Phase kickback is a uniquely quantum effect that allows information about \( f(x) \) to be transferred to the control register. This encoded phase is later “read out” by applying another Hadamard transform and measuring in the computational basis.
+	\end{remark}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{Marker Circuits and Multi-Qubit Phase Encoding}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\section{Marker Circuits}
+	
+	In some quantum algorithms (e.g., extended versions of Deutsch--Jozsa), one uses a \emph{marker circuit} to further process the phase-encoded information. For example, an operator \( V_f \) may be defined such that it acts as
+	\[
+	V_f \ket{x} = (-1)^{f(x)} \ket{x},
+	\]
+	so that the phase kickback is manifest directly on the control register without the ancilla. In many setups, the oracle is followed by additional gates (such as Hadamard transforms) that “mark” the outcome, so that upon measurement, the result indicates whether \( f \) is constant or balanced.
+	
+	\section{Multi-Qubit Phase Encoding via Inner Products}
+	
+	For an \( n \)-qubit state, the Hadamard transform has the effect of converting basis states into superpositions:
+	\[
+	H^{\otimes n} \ket{0}^{\otimes n} = \frac{1}{\sqrt{2^n}} \sum_{x \in \{0,1\}^n} \ket{x}.
+	\]
+	After the application of the oracle \( U_f \), the state becomes
+	\[
+	\frac{1}{\sqrt{2^n}} \sum_{x \in \{0,1\}^n} (-1)^{f(x)} \ket{x}.
+	\]
+	It is useful to define the \emph{bitwise inner product} for \( x,\,a \in \{0,1\}^n \) by
+	\[
+	x \cdot a = x_{n-1}a_{n-1} \oplus x_{n-2}a_{n-2} \oplus \cdots \oplus x_0 a_0.
+	\]
+	Using this notation, the Hadamard transform on any \( n \)-qubit state can be written as
+	\[
+	H^{\otimes n} \ket{x} = \frac{1}{\sqrt{2^n}} \sum_{a \in \{0,1\}^n} (-1)^{x \cdot a} \ket{a}.
+	\]
+	This expression is central in analyzing the interference pattern that results when measuring the state after the oracle application.
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{The Deutsch--Jozsa Algorithm in Detail}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\section{Algorithm Steps}
+	The Deutsch--Jozsa algorithm proceeds as follows:
+	\begin{enumerate}[label=\textbf{Step \arabic*:}, leftmargin=*, align=left]
+		\item \textbf{Initialization:}  
+		Prepare the \( n \)-qubit register (for the input) in the state \( \ket{0}^{\otimes n} \) and the ancillary qubit in the state \( \ket{1} \).  
+		\item \textbf{Hadamard Transform:}  
+		Apply \( H^{\otimes n} \) to the input register and a Hadamard \( H \) to the ancillary qubit. This produces  
+		\[
+		\ket{\psi_1} = \left(\frac{1}{\sqrt{2^n}} \sum_{x \in \{0,1\}^n} \ket{x}\right) \otimes \left(\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})\right).
+		\]
+		\item \textbf{Oracle Query with Phase Kickback:}  
+		Apply the oracle \( U_f \) such that  
+		\[
+		U_f \ket{x}\ket{-} = (-1)^{f(x)} \ket{x}\ket{-}.
+		\]
+		The state now becomes  
+		\[
+		\ket{\psi_2} = \frac{1}{\sqrt{2^n}} \sum_{x \in \{0,1\}^n} (-1)^{f(x)} \ket{x} \otimes \ket{-}.
+		\]
+		\item \textbf{Final Hadamard Transform:}  
+		Apply \( H^{\otimes n} \) on the input register. By linearity and the Hadamard's effect on the computational basis, one obtains  
+		\[
+		\ket{\psi_3} = \frac{1}{2^n} \sum_{a \in \{0,1\}^n} \left[\sum_{x \in \{0,1\}^n} (-1)^{f(x) + x \cdot a}\right] \ket{a} \otimes \ket{-}.
+		\]
+		\item \textbf{Measurement:}  
+		The probability amplitude associated with the state \( \ket{0}^{\otimes n} \) is  
+		\[
+		\frac{1}{2^n} \sum_{x \in \{0,1\}^n} (-1)^{f(x)}.
+		\]
+		\begin{itemize}[leftmargin=*, labelsep=5mm]
+			\item If \( f \) is constant, then \( (-1)^{f(x)} \) is the same for all \( x \) and the amplitude on \( \ket{0}^{\otimes n} \) equals \( \pm 1 \).
+			\item If \( f \) is balanced, the sum cancels to \( 0 \), so the probability of measuring \( \ket{0}^{\otimes n} \) is \( 0 \).
+		\end{itemize}
+	\end{enumerate}
+	
+	Thus, by measuring the input register, if the outcome is \( \ket{0}^{\otimes n} \) the function is constant; otherwise, it is balanced.
+	
+	\section{Discussion: Why This Encoding Works}
+	From an encoding perspective, the following points are crucial:
+	\begin{itemize}[leftmargin=*, labelsep=5mm]
+		\item \textbf{Reversible Mapping:}  
+		By constructing the unitary \( U_f \), we embed the classical function \( f \) into a reversible transformation that retains all information.
+		\item \textbf{Phase Encoding:}  
+		When the ancilla is prepared in \( \ket{-} \), the function value \( f(x) \) is not stored as a bit but as a phase \( (-1)^{f(x)} \) on the state \( \ket{x} \). This is a purely quantum encoding method.
+		\item \textbf{Global Interference:}  
+		The final Hadamard transform causes the relative phases to interfere. For a constant \( f \) the interference is constructive at \( \ket{0}^{\otimes n} \), while for a balanced \( f \) the interference cancels out. This interference effect is how the algorithm extracts a global property of \( f \) in a single step.
+		\item \textbf{Marker Circuits:}  
+		In more complex variations (or extensions), additional circuits (sometimes called \emph{marker circuits}) may be inserted to flag the phase information. Although not strictly necessary in the standard Deutsch--Jozsa algorithm, these circuits demonstrate how encoded phase information can be “marked” or amplified for measurement.
+	\end{itemize}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{Conclusion}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	We have presented the Deutsch--Jozsa algorithm from a rigorous, mathematically formal perspective. By embedding the classical function \( f:\{0,1\}^n\to\{0,1\} \) into a reversible quantum oracle, we encode information in both the amplitudes and phases of quantum states. The phenomenon of \emph{phase kickback} is exploited to transfer the effect of \( f(x) \) onto the control register. A subsequent Hadamard transform converts this phase information into measurable interference patterns, thus allowing us to distinguish between constant and balanced functions with a single oracle call. This encoding strategy is a key ingredient in many quantum algorithms, offering a quantum advantage over classical methods.
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\chapter{References}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\begin{enumerate}[label={[\arabic*]}]
+		\item M.A. Nielsen and I.L. Chuang, \emph{Quantum Computation and Quantum Information}, Cambridge University Press.
+		\item D. Deutsch and R. Jozsa, ``Rapid solution of problems by quantum computation,'' \emph{Proc. R. Soc. Lond. A} \textbf{439} (1992), 553--558.
+		\item S. Lang, \emph{Algebra}, Addison-Wesley.
+		\item J.J. Sakurai, \emph{Modern Quantum Mechanics}, Addison Wesley.
+	\end{enumerate}
+	
+	\backmatter
+	
+\end{document}

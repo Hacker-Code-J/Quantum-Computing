@@ -1,0 +1,729 @@
+\documentclass[12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{letterpaper, margin=1in}
+\usepackage{braket}
+
+%------------------------------------------------
+% Define Python code style for listings
+%------------------------------------------------
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblue}{rgb}{0.25,0.5,0.75}
+\lstdefinestyle{pythonstyle}{
+	language=Python,
+	basicstyle=\ttfamily\small,
+	numbers=left,
+	numberstyle=\tiny\color{codegray},
+	keywordstyle=\color{codeblue},
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	breaklines=true,
+	frame=single,
+	captionpos=b,
+}
+
+%------------------------------------------------
+% Theorem-like environments
+%------------------------------------------------
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{example}{Example}[chapter]
+
+%------------------------------------------------
+% Document Information
+%------------------------------------------------
+\title{Graduate Lecture Notes on Quantum Computing\\[1ex]From Digital Logic to Qiskit Simulation}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+	
+	%=====================================
+	\chapter{Introduction}
+	This document presents a rigorous treatment of quantum computing by bridging classical digital logic with modern quantum circuit simulation. We begin with the symbolic and algebraic formulation of the 1-bit half adder—a fundamental digital circuit—and extend these ideas into the quantum domain using Qiskit. Emphasis is placed on formal definitions, mathematical symbolism, and object‐oriented programming concepts that are essential for both theoretical understanding and practical implementation.
+	
+	%=====================================
+	\chapter{Classical Digital Logic: The 1-Bit Half Adder}
+	\section{Fundamentals of Digital Circuits}
+	Digital circuits perform operations on binary variables. A \emph{half adder} is one of the simplest circuits and is defined for two binary inputs \( A, B \in \{0,1\} \). It computes two outputs:
+	\[
+	S = A \oplus B, \quad C = A \wedge B,
+	\]
+	where \(\oplus\) denotes the exclusive OR (XOR) and \(\wedge\) denotes the logical AND.
+	
+	\begin{definition}[Half Adder]
+		Let \(A, B \in \{0,1\}\). The \emph{half adder} produces:
+		\begin{itemize}
+			\item \textbf{Sum:} \( S = A \oplus B \)
+			\item \textbf{Carry:} \( C = A \wedge B \)
+		\end{itemize}
+		This corresponds to the binary addition \(1+1=10\), where the sum is 0 and the carry is 1.
+	\end{definition}
+	
+	\section{Truth Table and Boolean Representation}
+	The truth table is given by:
+	
+	\begin{center}
+		\begin{tabular}{cc|cc}
+			\(A\) & \(B\) & \(S\) & \(C\) \\ \hline
+			0 & 0 & 0 & 0 \\
+			0 & 1 & 1 & 0 \\
+			1 & 0 & 1 & 0 \\
+			1 & 1 & 0 & 1 \\
+		\end{tabular}
+	\end{center}
+	
+	An equivalent algebraic representation is:
+	\[
+	S = A + B - 2AB,\quad C = AB,
+	\]
+	or, in modulo-2 arithmetic:
+	\[
+	S = (A+B) \mod 2.
+	\]
+	
+	%=====================================
+	\chapter{Foundations of Quantum Computing}
+	\section{Qubits and Quantum Gates}
+	In contrast to classical bits, a \emph{qubit} is described by a unit vector in a two-dimensional Hilbert space:
+	\[
+	\ket{\psi} = \alpha \ket{0} + \beta \ket{1}, \quad \text{with } |\alpha|^2 + |\beta|^2 = 1.
+	\]
+	Quantum gates are represented by unitary matrices. For instance, the Pauli-X (NOT) gate is given by:
+	\[
+	X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix},
+	\]
+	which acts as:
+	\[
+	X\ket{0} = \ket{1}, \quad X\ket{1} = \ket{0}.
+	\]
+	
+	\section{Measurement Postulate}
+	Upon measurement in the computational basis, the probability of observing state \(\ket{i}\) for a state \(\ket{\psi}\) is:
+	\[
+	p(i) = |\langle i \mid \psi \rangle|^2.
+	\]
+	
+	\begin{theorem}[Measurement Postulate]
+		Let \(\ket{\psi} \in \mathcal{H}\) be a quantum state. Then the measurement in the standard basis yields the outcome \(\ket{i}\) with probability
+		\[
+		p(i) = |\langle i \mid \psi \rangle|^2.
+		\]
+	\end{theorem}
+	
+	%=====================================
+	\chapter{Quantum Circuit Construction with Qiskit}
+	\section{Overview of Qiskit}
+	Qiskit is a Python framework for creating, simulating, and executing quantum circuits. In Qiskit, quantum circuits are constructed as objects that encapsulate registers, gates, and measurements.
+	
+	\section{Basic Quantum Circuit Example}
+	The following Python code initializes a quantum circuit and applies the Pauli-X gate:
+	
+\begin{lstlisting}[style=pythonstyle, caption={Quantum Circuit Initialization in Qiskit}]
+from qiskit import QuantumCircuit
+
+# Create a quantum circuit with 2 qubits.
+c1 = QuantumCircuit(2)
+print('Type of c1 object:', type(c1))
+
+# Apply the Pauli-X gate on the 0-th qubit.
+c1.x(0)
+print('Qubits in circuit c1:', c1.qubits)
+\end{lstlisting}
+	
+	\section{Mapping the Half Adder to a Quantum Circuit}
+	To emulate the classical half adder in a quantum setting, one can define a function that constructs a sub-circuit representing the half adder. Formally, define a function:
+	\[
+	f_{\text{HA}}: \{0,1\}^2 \to \mathcal{C},\quad f_{\text{HA}}(A,B) = \mathcal{C}_{\text{HA}},
+	\]
+	where \(\mathcal{C}_{\text{HA}}\) is the corresponding quantum circuit.
+	
+\begin{lstlisting}[style=pythonstyle, caption={Definition of half\_adder() Function}]
+def half_adder():
+"""
+Constructs a quantum circuit emulating a 1-bit half adder.
+Returns a QuantumCircuit object with 2 qubits and 2 classical bits.
+"""
+qc = QuantumCircuit(2, 2)
+# Implement the XOR operation with a CNOT gate.
+qc.cx(0, 1)
+# The AND operation may be emulated by further gate decomposition.
+qc.ccx(0, 1, 0)  # This is illustrative; a proper AND gate might require ancilla.
+return qc
+
+# Integrate the half adder sub-circuit into a main circuit.
+main_circuit = QuantumCircuit(4, 4)
+ha_circuit = half_adder()
+main_circuit.compose(ha_circuit, inplace=True)
+\end{lstlisting}
+	
+	%=====================================
+	\chapter{Object-Oriented Programming and Modular Design in Python}
+	\section{Classes and Objects}
+	Python is an object-oriented programming language. A \emph{class} is a blueprint for objects; for instance, the Qiskit class \texttt{QuantumCircuit} defines methods and attributes for circuit operations.
+	
+	\begin{definition}[Class and Object]
+		A class \(\mathcal{C}\) is defined as a tuple \((\mathcal{D}, \mathcal{F})\), where \(\mathcal{D}\) represents member variables and \(\mathcal{F}\) represents member functions. An object is an instance of a class.
+	\end{definition}
+	
+	\section{Variable Scoping and Naming Conventions}
+	\subsection{Variable Scope}
+	\begin{itemize}
+		\item \textbf{Global Variables:} Defined outside of functions.
+		\item \textbf{Local Variables:} Defined within functions.
+	\end{itemize}
+	If a local variable is not declared, the global variable of the same name is used.
+	
+	\subsection{Naming Conventions}
+	Python naming follows:
+	\begin{itemize}
+		\item \textbf{Variables/Functions:} lowercase with underscores (e.g., \texttt{half\_adder}).
+		\item \textbf{User-Defined Classes:} CapitalizedCamelCase (e.g., \texttt{QuantumCircuit}).
+		\item \textbf{Constants:} ALL\_CAPS (e.g., \texttt{UN\_TOUCHABLE}).
+	\end{itemize}
+	
+	For example,
+	\[
+	\texttt{Qubit(QuantumRegister(4, 'q'),0)} \equiv \texttt{qreg\_q[0]}.
+	\]
+	
+	\section{Global vs. Member Functions}
+	Global functions, such as \texttt{plot\_distribution()}, operate independently of class instances. In contrast, member functions (methods) such as \texttt{QuantumCircuit.x()} operate on specific object instances.
+	
+	%=====================================
+	\chapter{Quantum Circuit Simulation and Execution}
+	\section{Simulation and Measurement}
+	After constructing a quantum circuit, simulation is performed using a quantum simulator. Measurements are applied to collapse the quantum state and extract classical outcomes.
+	
+	\begin{example}[Measurement Simulation]
+		Assume a circuit is simulated and all qubits are measured. The probability distribution over the outcomes is given by the Born rule:
+		\[
+		p(i) = |\langle i \mid \psi \rangle|^2.
+		\]
+		Visualization of these outcomes is critical to verify the circuit's behavior.
+	\end{example}
+	
+	\section{Execution on IBM Quantum Hardware}
+	To execute on real quantum hardware, one must authenticate with an IBM Quantum token:
+	\[
+	\texttt{token} = \texttt{"YOUR\_TOKEN"}.
+	\]
+	After job submission, the system queues the execution. The job list and retrieval of results are handled via the IBM Quantum Platform.
+	
+	%=====================================
+	\chapter{Practical Exercises and Lab Instructions}
+	\section{Lab Assignment: Constructing a Quantum Half Adder}
+	\subsection{Task Overview}
+	\begin{enumerate}
+		\item Implement the \texttt{half\_adder()} function in Qiskit.
+		\item Append the returned sub-circuit to a main circuit.
+		\item Simulate the circuit and verify that all qubits are measured.
+	\end{enumerate}
+	
+	\subsection{Expected Measurement Outcomes}
+	For the given lab, the measurement values should correspond to:
+	\[
+	\texttt{01, 01, 01, 10, 10, 11}
+	\]
+	corresponding to the underlying binary additions:
+	\[
+	\begin{aligned}
+		\text{in1} + \text{in0} &\to \text{result11, result10} \quad (1+1=10),\\[1mm]
+		\text{in3} + \text{in2} &\to \text{result13, result12} \quad (1+0=01),\\[1mm]
+		\text{result10} + \text{result12} &\to \text{result21, result20} \quad (0+1=01),\\[1mm]
+		\text{result11} + \text{result13} &\to \text{result23, result22} \quad (1+0=01).
+	\end{aligned}
+	\]
+	
+	\section{Guidelines for Google Colab}
+	\begin{itemize}
+		\item \textbf{Uploading Notebooks:} Use the Google Colab interface to upload your \texttt{.ipynb} file.
+		\item \textbf{Downloading Notebooks:} Download the file from Colab for submission.
+	\end{itemize}
+	
+	%=====================================
+	\chapter{Overview of Lecture Slides}
+	Below is a summary of the slide contents covered in these notes:
+	\begin{description}
+		\item[Slide 1:] 1-bit half adder: digital circuit.
+		\item[Slide 2:] Binary arithmetic: \(1+1=10\).
+		\item[Slide 3:] Quantum circuit representation using Python Qiskit.
+		\item[Slide 4:] Using Google Colab for Python notebooks.
+		\item[Slide 5:] Installation of the Qiskit package.
+		\item[Slides 6--7:] (Additional introductory content.)
+		\item[Slides 8--12:] Detailed discussion on classes and objects.
+		\item[Slide 13:] Function syntax and return values.
+		\item[Slide 14:] Python naming conventions.
+		\item[Slides 15--16:] (Supplementary topics.)
+		\item[Slide 17:] Modular programming: implementation as functions.
+		\item[Slide 18:] Local vs. global variables.
+		\item[Slides 19--24:] (Further elaboration on variable scope and circuit construction.)
+		\item[Slide 25:] Simulation of quantum circuits.
+		\item[Slide 26:] Advanced simulation techniques.
+		\item[Slide 27:] Visualization of measurement results.
+		\item[Slide 28:] Execution on IBM Quantum hardware.
+		\item[Slide 29:] IBM Quantum token management.
+		\item[Slide 30:] Results from IBM Quantum executions.
+		\item[Slide 31:] IBM Quantum Platform job list.
+		\item[Slide 33:] Retrieving results from quantum jobs.
+		\item[Slide 34:] Lab exercise instructions.
+		\item[Slides 35--36:] (Additional exercise guidelines.)
+		\item[Slide 37:] Further simulation details.
+		\item[Slide 38:] Measurement visualization techniques.
+		\item[Slide 39:] Uploading \texttt{.ipynb} files to Colab.
+		\item[Slide 40:] Downloading \texttt{.ipynb} files from Colab.
+	\end{description}
+	
+	%=====================================
+	\appendix
+	\chapter{Further Reading and References}
+	\begin{itemize}
+		\item Nielsen, M. A. and Chuang, I. L., \emph{Quantum Computation and Quantum Information}.
+		\item Cross, A. W., Bishop, L. S., Smolin, J. A. and Gambetta, J. M., \emph{Open Quantum Assembly Language}.
+		\item Official Qiskit documentation: \url{https://qiskit.org/documentation/}.
+	\end{itemize}
+	
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\documentclass[12pt]{book}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{lmodern}
+%\usepackage{amsmath, amssymb, amsthm, mathtools}
+%\usepackage{graphicx}
+%\usepackage{tikz}
+%\usepackage{hyperref}
+%\usepackage{listings}
+%\usepackage{xcolor}
+%\usepackage{geometry}
+%\geometry{letterpaper, margin=1in}
+%\usepackage{braket}
+%
+%%----------------------------
+%% Python Code Listing Style
+%%----------------------------
+%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+%\definecolor{codeblue}{rgb}{0.25,0.5,0.75}
+%\lstdefinestyle{pythonstyle}{
+%	language=Python,
+%	basicstyle=\ttfamily\small,
+%	numbers=left,
+%	numberstyle=\tiny\color{codegray},
+%	keywordstyle=\color{codeblue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{red},
+%	breaklines=true,
+%	frame=single,
+%	captionpos=b,
+%}
+%
+%%----------------------------
+%% Theorem Environments
+%%----------------------------
+%\newtheorem{theorem}{Theorem}[chapter]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{definition}{Definition}[chapter]
+%\newtheorem{corollary}[theorem]{Corollary}
+%\theoremstyle{remark}
+%\newtheorem{example}{Example}[chapter]
+%
+%\begin{document}
+%	
+%	\title{Graduate Lecture Notes on Quantum Computing:\\ From Digital Logic to Quantum Circuit Simulation using Qiskit}
+%	\author{Your Name}
+%	\date{\today}
+%	\maketitle
+%	
+%	\tableofcontents
+%	
+%	%=====================================
+%	\chapter{Introduction}
+%	This document presents a rigorous treatment of quantum computing by bridging classical digital logic with modern quantum circuit simulation. Starting with the symbolic representation of the 1-bit half adder—a fundamental digital circuit—we extend the discussion to the quantum domain by describing how to model and simulate these circuits using Qiskit. The approach is mathematically detailed and aimed at researchers and graduate students in quantum computing and advanced mathematics.
+%	
+%	%=====================================
+%	\chapter{Classical Digital Logic: The 1-bit Half Adder}
+%	
+%	\section{Conceptual Overview}
+%	A half adder is a basic combinatorial circuit that computes the sum and carry of two binary digits. Let \(A, B \in \{0,1\}\) denote the binary inputs. The half adder produces two outputs: 
+%	\[
+%	S = A \oplus B, \quad C = A \wedge B,
+%	\]
+%	where \(\oplus\) is the exclusive OR (XOR) operation and \(\wedge\) is the logical AND.
+%	
+%	\section{Truth Table and Boolean Formulation}
+%	The truth table for the half adder is given below:
+%	
+%	\begin{center}
+%		\begin{tabular}{cc|cc}
+%			\(A\) & \(B\) & \(S\) & \(C\) \\ \hline
+%			0 & 0 & 0 & 0 \\
+%			0 & 1 & 1 & 0 \\
+%			1 & 0 & 1 & 0 \\
+%			1 & 1 & 0 & 1 \\
+%		\end{tabular}
+%	\end{center}
+%	
+%	In arithmetic terms, notice that the binary addition \(1 + 1 = 10\) corresponds to a sum \(S=0\) with a carry \(C=1\).
+%	
+%	\section{Algebraic and Modular Representations}
+%	Expressed in algebraic form, the operations can be written as:
+%	\[
+%	S = A + B - 2AB,\quad C = AB.
+%	\]
+%	Under modulo-2 arithmetic, this reduces to:
+%	\[
+%	S = (A+B) \mod 2.
+%	\]
+%	This formulation underlines the duality between Boolean algebra and modular arithmetic.
+%	
+%	%=====================================
+%	\chapter{Quantum Circuit Simulation with Qiskit}
+%	
+%	\section{Quantum Computing Preliminaries}
+%	Quantum computing generalizes classical logic by encoding information in quantum states. A qubit is represented as a unit vector in a two-dimensional complex Hilbert space. For example, the Pauli-X (NOT) gate is defined by the matrix:
+%	\[
+%	X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix},
+%	\]
+%	which performs the transformation:
+%	\[
+%	X \ket{0} = \ket{1}, \quad X \ket{1} = \ket{0}.
+%	\]
+%	
+%	\section{Constructing Quantum Circuits using Qiskit}
+%	Qiskit is a Python framework for creating and simulating quantum circuits. Below is an illustrative example of initializing a quantum circuit and applying a gate:
+%	
+%\begin{lstlisting}[style=pythonstyle, caption={Quantum Circuit Initialization and Operation in Qiskit}]
+%from qiskit import QuantumCircuit
+%
+%# Initialize a quantum circuit with 2 qubits.
+%c1 = QuantumCircuit(2)
+%print('Type of c1 object:', type(c1))
+%
+%# Apply the Pauli-X gate on the 0-th qubit.
+%c1.x(0)
+%print('Qubits in circuit c1:', c1.qubits)
+%\end{lstlisting}
+%	
+%	\section{Mapping the Half Adder to a Quantum Circuit}
+%	A key challenge is to emulate classical logic within a quantum framework. Consider a function \( f_{\text{HA}} \) that constructs a quantum sub-circuit mimicking the behavior of the half adder. Formally, define:
+%	\[
+%	f_{\text{HA}}: \{0,1\}^2 \to \mathcal{C}, \quad f_{\text{HA}}(A,B) = \mathcal{C}_{\text{HA}},
+%	\]
+%	where \( \mathcal{C}_{\text{HA}} \) is the resulting circuit object.
+%	
+%	\subsection{Function-Based Circuit Construction}
+%	The following Python code illustrates the creation of such a function:
+%\begin{lstlisting}[style=pythonstyle, caption={Half Adder Circuit Function in Qiskit}]
+%def half_adder():
+%	"""
+%	Constructs a quantum circuit representing a half adder.
+%	Returns a QuantumCircuit object with 2 qubits and 2 classical bits.
+%	"""
+%	qc = QuantumCircuit(2, 2)
+%	# Implement XOR: using a CNOT gate.
+%	qc.cx(0, 1)
+%	% The AND operation can be emulated using a Toffoli gate (if additional ancilla qubits are provided)
+%	% For illustration purposes, we simulate an AND-like behavior.
+%	qc.ccx(0, 1, 0)  
+%	return qc
+%
+%# Create a main circuit and compose it with the half adder sub-circuit.
+%main_circuit = QuantumCircuit(4, 4)
+%ha_circuit = half_adder()
+%main_circuit.compose(ha_circuit, inplace=True)
+%\end{lstlisting}
+%	
+%	\section{Simulation, Measurement, and Interpretation}
+%	Once the circuit is constructed, simulation proceeds by executing the circuit on a quantum simulator. Measurement collapses the quantum state according to the Born rule.
+%	
+%	\begin{theorem}[Measurement Postulate]
+%		Let \(\ket{\psi} \in \mathcal{H}\) be a quantum state. Upon measurement in the computational basis, the probability \(p(i)\) of obtaining the state \(\ket{i}\) is given by:
+%		\[
+%		p(i) = |\langle i \mid \psi \rangle|^2.
+%		\]
+%	\end{theorem}
+%	
+%	The outcomes, once measured, can be visualized via histograms or probability distributions to validate the circuit behavior.
+%	
+%	\section{Execution on Real Quantum Hardware}
+%	To run circuits on IBM Quantum devices, one must authenticate with an API token:
+%	\[
+%	\text{token} = \text{``YOUR\_TOKEN''}.
+%	\]
+%	After submission, the system queues the job and the results can be retrieved and analyzed.
+%	
+%	%=====================================
+%	\chapter{Object-Oriented Programming and Modular Design in Quantum Software}
+%	\section{Classes, Objects, and Abstraction}
+%	The object-oriented paradigm is essential in structuring complex quantum programs. In Qiskit, the class \texttt{QuantumCircuit} encapsulates both data (such as qubit registers) and operations (quantum gates).
+%	
+%	\begin{definition}[Class and Object]
+%		A \emph{class} \(\mathcal{C}\) is a tuple \((\mathcal{D}, \mathcal{F})\), where \(\mathcal{D}\) is the set of member variables and \(\mathcal{F}\) is the set of member functions. An \emph{object} \(c\) is an instance of \(\mathcal{C}\) with concrete data.
+%	\end{definition}
+%	
+%	\section{Scope, Binding, and Naming Conventions}
+%	In Python:
+%	\begin{itemize}
+%		\item \textbf{Global Variables}: Defined outside functions.
+%		\item \textbf{Local Variables}: Defined within functions.
+%	\end{itemize}
+%	Moreover, naming conventions recommend using:
+%	\begin{itemize}
+%		\item \textbf{Lowercase with underscores} for variables and functions (e.g., \texttt{half\_adder}).
+%		\item \textbf{CapitalizedCamelCase} for class names (e.g., \texttt{QuantumCircuit}).
+%		\item \textbf{ALL\_CAPS} for constants.
+%	\end{itemize}
+%	
+%	%=====================================
+%	\chapter{Conclusion}
+%	We have surveyed a path from classical digital logic to quantum circuit simulation. By formulating the half adder both in Boolean algebra and in its quantum circuit analogue, and by discussing object-oriented design in Python, these notes offer a bridge between theory and implementation. This rigorous, symbolic approach lays the groundwork for advanced research in quantum computing.
+%	
+%	%=====================================
+%	\appendix
+%	\chapter{Exercises and Further Topics}
+%	\section{Exercise: Extending the Half Adder}
+%	\begin{enumerate}
+%		\item Implement the \texttt{half\_adder()} function in Qiskit.
+%		\item Construct a main circuit that appends the half adder sub-circuit.
+%		\item Simulate the circuit and verify that the measurement outcomes conform to theoretical predictions.
+%	\end{enumerate}
+%	
+%	\section{Advanced Topics}
+%	\begin{itemize}
+%		\item Explore circuit composition methods such as \texttt{append()} versus \texttt{compose()}.
+%		\item Analyze measurement statistics using probability theory and statistical inference.
+%		\item Implement circuits on IBM Quantum hardware and study error mitigation strategies.
+%	\end{itemize}
+%	
+%\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\documentclass[11pt]{book}
+%
+%%----------------------------
+%% Packages and Formatting
+%%----------------------------
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{lmodern}
+%\usepackage{amsmath, amssymb, amsthm, mathtools}
+%\usepackage{graphicx}
+%\usepackage{tikz}
+%\usepackage{hyperref}
+%\usepackage{color}
+%\usepackage{listings}
+%
+%%----------------------------
+%% Listings: Python Code Style
+%%----------------------------
+%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+%\definecolor{codeblue}{rgb}{0.25,0.5,0.75}
+%\lstdefinestyle{pythonstyle}{
+%	language=Python,
+%	basicstyle=\ttfamily\small,
+%	numbers=left,
+%	numberstyle=\tiny\color{codegray},
+%	keywordstyle=\color{codeblue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{red},
+%	breaklines=true,
+%	frame=single,
+%	captionpos=b,
+%}
+%
+%%----------------------------
+%% Theorem-like Environments
+%%----------------------------
+%\newtheorem{definition}{Definition}[chapter]
+%\newtheorem{theorem}{Theorem}[chapter]
+%\newtheorem{example}{Example}[chapter]
+%
+%%----------------------------
+%% Document Information
+%%----------------------------
+%\title{Graduate Lecture Notes on Quantum Circuit Simulation\\ and Digital Logic Implementation using Qiskit}
+%\author{Your Name Here}
+%\date{\today}
+%
+%\begin{document}
+%	\maketitle
+%	\tableofcontents
+%	
+%	%============================
+%	\chapter{Introduction}
+%	This lecture note provides a comprehensive and mathematically rigorous treatment of both classical digital logic and quantum circuit simulation using Qiskit. Emphasis is placed on the symbolic and structural representation of circuits, as well as the object-oriented paradigms in Python. The notes are written at a graduate level and are intended for researchers and advanced students in mathematics and quantum computation.
+%	
+%	%============================
+%	\chapter{Digital Logic and the 1-bit Half Adder}
+%	\section{Fundamentals of Digital Circuits}
+%	Digital circuits perform logical operations using binary variables. A fundamental component is the \emph{half adder}, which computes the sum and carry of two binary digits.
+%	
+%	\begin{definition}[Half Adder]
+%		Let \(A, B \in \{0,1\}\) be two binary inputs. The half adder produces two outputs: the \emph{sum} \(S\) and the \emph{carry} \(C\). They are defined by:
+%		\begin{align*}
+%			S &= A \oplus B, \quad \text{(exclusive OR)}\\[1mm]
+%			C &= A \wedge B, \quad \text{(logical AND)}
+%		\end{align*}
+%	\end{definition}
+%	
+%	The corresponding truth table is:
+%	
+%	\begin{center}
+%		\begin{tabular}{cc|cc}
+%			\(A\) & \(B\) & \(C\) & \(S\) \\ \hline
+%			0 & 0 & 0 & 0 \\
+%			0 & 1 & 0 & 1 \\
+%			1 & 0 & 0 & 1 \\
+%			1 & 1 & 1 & 0 \\
+%		\end{tabular}
+%	\end{center}
+%	
+%	Note that in binary arithmetic the operation \(1+1\) yields \(10\) (with \(1\) as the carry and \(0\) as the sum).
+%	
+%	\section{Algebraic and Symbolic Representation}
+%	In Boolean algebra, the half adder can also be represented by:
+%	\[
+%	S = A + B - 2AB, \quad C = AB,
+%	\]
+%	or, equivalently, using modulo-2 arithmetic:
+%	\[
+%	S = (A+B) \mod 2.
+%	\]
+%	These formulations highlight the interplay between algebraic operations and binary logic.
+%	
+%	%============================
+%	\chapter{Quantum Circuit Simulation with Qiskit}
+%	\section{Overview of Qiskit and Quantum Circuits}
+%	Qiskit is a Python-based framework that allows the construction, simulation, and execution of quantum circuits. In this context, a quantum circuit is viewed as a mathematical object comprising a sequence of unitary operations acting on qubits.
+%	
+%	\section{A Simple Quantum Circuit Example}
+%	Consider the following Python code that creates a quantum circuit and applies a basic operation. The code illustrates object instantiation and manipulation in Qiskit.
+%	
+%\begin{lstlisting}[style=pythonstyle, caption={Quantum Circuit Initialization and Operation}]
+%from qiskit import QuantumCircuit
+%
+%% Create a quantum circuit with 2 qubits.
+%c1 = QuantumCircuit(2)
+%print('Type of c1 object:', type(c1))
+%
+%% Apply the Pauli-X gate on the 0-th qubit.
+%c1.x(0)
+%print('Qubits in circuit c1:', c1.qubits)
+%\end{lstlisting}
+%	
+%	\section{Modeling a Half Adder as a Quantum Circuit}
+%	The classical half adder can be emulated on a quantum computer by encoding binary digits into quantum states. A function \texttt{half\_adder()} can be constructed to generate the corresponding sub-circuit. This sub-circuit is then integrated into a larger quantum circuit, which is subsequently simulated.
+%	
+%	\section{Simulation, Measurement, and IBM Quantum Hardware}
+%	After constructing the circuit, simulation involves:
+%	\begin{enumerate}
+%		\item \textbf{Circuit Construction:} Append the half-adder sub-circuit to the main circuit.
+%		\item \textbf{Execution:} Simulate the circuit using a quantum simulator.
+%		\item \textbf{Measurement:} Measure all qubits to obtain a probability distribution over the classical outcomes.
+%	\end{enumerate}
+%	
+%	Execution on actual IBM Quantum hardware requires an account and the corresponding authentication token:
+%	\[
+%	\text{token} = \text{``YOUR\_TOKEN''}.
+%	\]
+%	
+%	%============================
+%	\chapter{Object-Oriented Programming in Python}
+%	\section{Classes, Objects, and Abstraction}
+%	In Python, classes provide the structure for objects. This object-oriented approach allows us to encapsulate data and functions into a coherent framework. For example, the class \texttt{QuantumCircuit} in Qiskit defines both the data (e.g., qubit registers) and the operations (e.g., quantum gates).
+%	
+%	\begin{definition}[Class and Object]
+%		A \emph{class} \(\mathcal{C}\) is defined as a tuple \((\mathcal{D}, \mathcal{F})\), where \(\mathcal{D}\) is the set of member variables and \(\mathcal{F}\) is the set of member functions. An \emph{object} \(c \in \mathcal{C}\) is an instance that realizes the abstract structure specified by \(\mathcal{C}\).
+%	\end{definition}
+%	
+%	\section{Scope and Variable Binding}
+%	Understanding variable scope is essential. In Python:
+%	\begin{itemize}
+%		\item \textbf{Global Variables:} Declared outside any function.
+%		\item \textbf{Local Variables:} Declared within a function.  
+%	\end{itemize}
+%	The assignment operator (\( := \)) represents the binding of a value to a variable, while \( == \) is used for equality testing.
+%	
+%	\section{Modular Design and Function Implementation}
+%	The modularity of code—defining operations as functions—enhances clarity and reusability. For example, a function \texttt{half\_adder()} encapsulates the construction of the quantum circuit sub-component representing the half adder.
+%	
+%	%============================
+%	\chapter{Advanced Topics in Quantum Simulation}
+%	\section{Circuit Composition Methods}
+%	Qiskit provides multiple methods for composing quantum circuits:
+%	\begin{itemize}
+%		\item \texttt{QuantumCircuit.append()}: Appends a sub-circuit.
+%		\item \texttt{QuantumCircuit.compose()}: Composes circuits with specific operational semantics.
+%	\end{itemize}
+%	The choice of method depends on the desired circuit behavior and the structural design.
+%	
+%	\section{Measurement and Visualization Techniques}
+%	Post-simulation, the measurement outcomes can be visualized using histograms or other statistical plots. Such visualizations are instrumental in interpreting the results of quantum computations and validating theoretical predictions.
+%	
+%	%============================
+%	\chapter{Conclusion}
+%	We have explored both the classical half adder and its quantum analog within a unified mathematical framework. By integrating Boolean algebra, object-oriented programming, and quantum circuit simulation, these notes bridge the gap between traditional digital logic and modern quantum computing paradigms. The rigorous symbolic approach provided here is intended to serve as a foundation for further research and publication in advanced mathematics and quantum computation.
+%	
+%	%============================
+%	\appendix
+%	\chapter{Lecture Slides Overview}
+%	For reference, the lecture slides cover the following topics:
+%	\begin{itemize}
+%		\item \textbf{Slide 1}: 1-bit Half Adder: Digital Circuit.
+%		\item \textbf{Slide 2}: Binary Addition (\(1+1=10\)).
+%		\item \textbf{Slide 3}: Quantum Circuit Representation using Python Qiskit.
+%		\item \textbf{Slide 4}: Utilizing Google Colab for Python Notebooks.
+%		\item \textbf{Slide 5}: Installation and Setup of the Qiskit Package.
+%		\item \textbf{Slides 6--12}: Fundamental Concepts of Classes and Objects.
+%		\item \textbf{Slide 13}: Function Definitions and Return Values.
+%		\item \textbf{Slide 14}: Python Naming Conventions.
+%		\item \textbf{Slides 15--20}: Global and Local Variables, and Scope.
+%		\item \textbf{Slides 21--24}: Modular Design and Circuit Composition.
+%		\item \textbf{Slides 25--27}: Simulation and Measurement of Quantum Circuits.
+%		\item \textbf{Slides 28--31}: Execution on IBM Quantum Hardware.
+%		\item \textbf{Slides 32--40}: Advanced Topics in Simulation and Visualization.
+%	\end{itemize}
+%	
+%\end{document}
