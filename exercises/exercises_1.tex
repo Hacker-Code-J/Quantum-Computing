@@ -1,0 +1,269 @@
+\section*{Exercises \#1}
+\begin{enumerate}[\bfseries 1.]
+	\item (Rotation Matrix in the Complex Plane). 
+	Let \(\phi\in\mathbb{R}\) and consider the \(2\times2\) matrix  
+	\[
+	A \;=\;
+	\begin{pmatrix}
+		\cos\phi & -\sin\phi\\[6pt]
+		\sin\phi & \cos\phi
+	\end{pmatrix}\!\!.
+	\]  
+	\begin{enumerate}[(a)]
+		\item Prove that \(A\) is a unitary operator on \(\mathbb{C}^2\); that is, show $
+		A^\dagger A \;=\; I_2$, where \(A^\dagger\) is the conjugate-transpose of \(A\).
+		\item Determine the full spectrum of \(A\) and exhibit for each eigenvalue a corresponding (nonzero) eigenvector.
+	\end{enumerate}
+\begin{proof}[\normalfont\bfseries\textcolor{magenta}{Sol}] 
+\begin{enumerate}[(a)]
+	\item Since \(A\) has only real entries, \(A^\dagger = A^T\). Then \begin{align*}
+		A^T A
+		&=\begin{pmatrix}
+			\cos\phi & \sin\phi\\
+			-\sin\phi & \cos\phi
+		\end{pmatrix}
+		\begin{pmatrix}
+			\cos\phi & -\sin\phi\\
+			\sin\phi & \cos\phi
+		\end{pmatrix}\\
+		&=\begin{pmatrix}
+			\cos^2\phi + \sin^2\phi & -\cos\phi\,\sin\phi + \sin\phi\,\cos\phi\\[6pt]
+			-\sin\phi\,\cos\phi + \cos\phi\,\sin\phi & \sin^2\phi + \cos^2\phi
+		\end{pmatrix} \\
+		&=\begin{pmatrix}
+			1 & 0\\
+			0 & 1
+		\end{pmatrix}.
+	\end{align*}
+	\item We need to find \(\lambda\in\mathbb C\) and nonzero \(\vec{v}=(v_1,v_2)\) such that $
+	A\,\vec{v}=\lambda\,\vec{v}$. Equivalently, \[
+	(A-\lambda I_2)\vec{v}=\begin{pmatrix}
+		\cos\phi -\lambda & -\sin\phi\\
+		\sin\phi & \cos\phi -\lambda
+	\end{pmatrix}
+	\begin{pmatrix}v_1\\v_2\end{pmatrix}
+	=\begin{pmatrix}0\\0\end{pmatrix}.
+	\] Nontrivial solutions exist exactly when \[
+	\det\bigl(A-\lambda I\bigr)
+	=(\cos\phi-\lambda)^2 + \sin^2\phi =0.
+	\] Then
+	\[
+	(\cos\phi-\lambda)^2 + \sin^2\phi
+	=\lambda^2 -2\lambda\cos\phi + (\cos^2\phi+\sin^2\phi)
+	=\lambda^2 -2\lambda\cos\phi +1,
+	\] and so \begin{align*}
+	\lambda^2 -2(\cos\phi)\,\lambda +1 =0 &\implies
+	\lambda \;=\;\frac{2\cos\phi\pm\sqrt{(2\cos\phi)^2-4\cdot1\cdot1}}{2} \\
+	&\implies\lambda=\cos\phi\;\pm\;\sqrt{\cos^2\phi-1}\\
+	&\implies\lambda=\cos\phi\;\pm\;\sqrt{-\sin^2\phi}\\
+	&\implies\lambda = \cos\phi \pm i\sin\phi
+	= e^{\pm i\phi}.
+	\end{align*} 
+	Thus the two eigenvalues are
+	\[
+	\lambda_1 = e^{i\phi},\qquad \lambda_2 = e^{-i\phi}.
+	\]Since \begin{align*}
+		(A-\lambda_1 I)\vec{v}=0
+		\implies&\; \begin{pmatrix}
+			\cos\phi -(\cos\phi+i\sin\phi) & -\sin\phi\\[6pt]
+			\sin\phi & \cos\phi -(\cos\phi+i\sin\phi)
+		\end{pmatrix}
+		\begin{pmatrix}v_1\\v_2\end{pmatrix}
+		=0\\
+		\implies&\; \begin{cases}
+			(-\,i\sin\phi)\,v_1 \;-\;\sin\phi\,v_2 =0,\\
+			\sin\phi\,v_1 \;-\;(i\sin\phi)\,v_2 =0.
+		\end{cases}
+		\implies\; \begin{cases}
+		-iv_1 \;-v_2 =0,\\
+	v_1 \;-iv_2 =0.
+	\end{cases}\quad\text{if $\sin\phi\neq0$}\\
+	\implies&\vec{v}=t\begin{pmatrix}
+		1 \\ -i
+	\end{pmatrix}\quad\text{with}\; t\neq 0,
+	\end{align*}
+	a normalized eigenvector is $\displaystyle
+	\ket{v_1} = \frac1{\sqrt{2}}\begin{pmatrix}1\\[-3pt]-\,i\end{pmatrix}.$ Similarly, we have $\displaystyle
+	\ket{v_2} = \frac1{\sqrt{2}}\begin{pmatrix}1\\[-3pt]i\end{pmatrix}.$
+\end{enumerate}
+\end{proof}	
+	\item (Action of the Kronecker Product on Tensor‐Product Vectors).
+	Let  
+	\[
+	A\in\mathbb{C}^{n\times n},\quad B\in\mathbb{C}^{m\times m},
+	\qquad
+	\alpha\in\mathbb{C}^n,\quad \beta\in\mathbb{C}^m,
+	\]  
+	and form their Kronecker products \(A\otimes B\in\mathbb{C}^{(nm)\times(nm)}\) and \(\alpha\otimes\beta\in\mathbb{C}^{nm}\).  Show that  
+	\[
+	(A\otimes B)\,(\alpha\otimes\beta)
+	\;=\;
+	(A\,\alpha)\;\otimes\;(B\,\beta).
+	\]
+\begin{proof}[\normalfont\bfseries\textcolor{magenta}{Sol}]
+1. Let \(\{e_i\}_{i=1}^n\) be the standard basis of \(\mathbb{C}^n\) and \(\{f_j\}_{j=1}^m\) the standard basis of \(\mathbb{C}^m\).  By definition of the tensor (Kronecker) product we have the basis  
+\[
+\{\,e_i\otimes f_j : 1\le i\le n,\;1\le j\le m\}\quad\text{for $\mathbb{C}^n\otimes\mathbb{C}^m\cong\mathbb{C}^{nm}$.}
+\] Write
+\[
+\alpha = \sum_{i=1}^n \alpha_i\,e_i,
+\qquad
+\beta  = \sum_{j=1}^m \beta_j\,f_j.
+\]
+Then by bilinearity of the tensor product,
+\[
+\alpha\otimes\beta
+= \sum_{i=1}^n\sum_{j=1}^m 
+\bigl(\alpha_i\,\beta_j\bigr)\,(e_i\otimes f_j).
+\] By the definition of the Kronecker‐product operator, \[
+(A\otimes B)\bigl(e_i\otimes f_j\bigr)
+= \bigl(A\,e_i\bigr)\;\otimes\;\bigl(B\,f_j\bigr),
+\]
+and linearity then gives \[
+(A\otimes B)\,(\alpha\otimes\beta)
+= \sum_{i=1}^n\sum_{j=1}^m \alpha_i\,\beta_j\,
+(A\otimes B)\bigl(e_i\otimes f_j\bigr)
+= \sum_{i,j} \alpha_i\,\beta_j\,
+\bigl(Ae_i\otimes Bf_j\bigr).
+\]
+Observe that \[
+A\alpha
+= A\bigl(\sum_i \alpha_i e_i\bigr)
+= \sum_i \alpha_i \,(A\,e_i),
+\quad
+B\beta
+= \sum_j \beta_j \,(B\,f_j).
+\]
+Hence \[
+A\alpha\;\otimes\;B\beta
+= \biggl(\sum_i\alpha_i\,Ae_i\biggr)
+\otimes
+\biggl(\sum_j\beta_j\,Bf_j\biggr)
+= \sum_{i,j} \alpha_i\,\beta_j\,
+\bigl(Ae_i\otimes Bf_j\bigr)=(A\otimes B)\,(\alpha\otimes\beta).
+\]
+\end{proof}
+	\item % problem 3
+	\item % problem 4
+	\newpage
+	\item (SWAP Gate via Three CNOTs)\;% problem 5
+	Let \[
+	\mathrm{SWAP}\colon \mathbb{C}^2\otimes\mathbb{C}^2 \to \mathbb{C}^2\otimes\mathbb{C}^2
+	\]
+	be the two‐qubit operator defined on the computational basis by
+	\[
+	\mathrm{SWAP}\,\ket{x,y} \;=\; \ket{y,x},
+	\quad x,y\in\{0,1\}.
+	\]
+	\begin{enumerate}[(i)]
+		\item Prove that
+		\[
+		\mathrm{SWAP}
+		= \mathrm{CNOT}_{1\to2}\;\circ\;\mathrm{CNOT}_{2\to1}\;\circ\;\mathrm{CNOT}_{1\to2},
+		\]
+		where $\mathrm{CNOT}_{i\to j}$ denotes a CNOT gate with control qubit $i$ and target qubit $j$.
+		\item Show that the following circuit indeed effects the swap of the two qubits:
+		\begin{center}
+		\begin{quantikz}[column sep=1cm]
+			\lstick{$\ket{x}$} & \ctrl{1} & \targ{}    & \ctrl{1} & \qw \\
+			\lstick{$\ket{y}$} & \targ{}    & \ctrl{-1} & \targ{}  & \qw
+		\end{quantikz}
+	\end{center}
+	\end{enumerate}
+\begin{proof}[\normalfont\bfseries\textcolor{magenta}{Sol}]
+	Since both \(U\) and \(\mathrm{SWAP}\) are unitary operators on the two‐qubit Hilbert space, it suffices to check their action on the computational basis \(\{\ket{x,y}:x,y\in\{0,1\}\}\).  Write
+	\[
+	\mathrm{CNOT}_{1\to2}\,\ket{x,y}
+	=\ket{x,\;x\oplus y}, 
+	\quad
+	\mathrm{CNOT}_{2\to1}\,\ket{a,b}
+	=\ket{a\oplus b,\;b},
+	\]
+	where \(\oplus\) denotes addition modulo~2.	
+	
+	\medskip
+	\noindent\textbf{Step 1:} 
+	Apply the first gate:\; $\ket{x,y}
+	\;\xmapsto{\;\mathrm{CNOT}_{1\to2}\;}
+	\ket{x,\;x\oplus y}.$
+	
+	\noindent\textbf{Step 2:} Apply the second gate, \(\mathrm{CNOT}_{2\to1}\), to the intermediate state:
+	\[
+	\ket{x,\;x\oplus y}
+	\;\xmapsto{\;\mathrm{CNOT}_{2\to1}\;}
+	\ket{\;x\oplus(x\oplus y),\;x\oplus y}
+	=\ket{y,\;x\oplus y}.
+	\]
+	
+	\noindent\textbf{Step 3:} Finally apply \(\mathrm{CNOT}_{1\to2}\) again:
+	\[
+	\ket{y,\;x\oplus y}
+	\;\xmapsto{\;\mathrm{CNOT}_{1\to2}\;}
+	\ket{y,\;y\oplus(x\oplus y)}
+	=\ket{y,\;x}.
+	\]
+	
+	\smallskip
+	
+	Hence the composite action on an arbitrary basis vector is
+	\[
+	U\,\ket{x,y}
+	=\ket{y,x},
+	\]
+	which by definition is exactly \(\mathrm{SWAP}\,\ket{x,y}\).
+\end{proof}
+	\newpage
+	\item (Matrix Representation of the Toffoli (CCX) Gate)\;% problem 6
+	\begin{center}
+		\begin{quantikz}[column sep=1cm]
+			\lstick{$q_0$} & \targ{} & \qw\rstick{$q_0\oplus q_1q_2$} \\
+			\lstick{$q_1$} & \ctrl{-1} & \qw\rstick{$q_1$} \\
+			\lstick{$q_2$} & \ctrl{-1}  & \qw\rstick{$q_2$}
+		\end{quantikz}
+	\end{center}
+	The three‐qubit Toffoli gate (also called the Controlled-Controlled-NOT, or CCX, gate) with qubits \(q_0,q_1\) as controls and \(q_2\) as target acts on the computational basis by
+	\[
+	\ket{q_0q_1q_2}
+	\;\xrightarrow{CCX_{210}}\;
+	\ket{(q_0\oplus (q_1\land q_2))q_1q_2},
+	\qquad q_0,q_1,q_2\in\{0,1\}.
+	\]
+	Using the lexicographic ordering
+	\(\ket{000},\ket{001},\ket{010},\dots,\ket{111}\),
+	represent \(\mathrm{CCX}_{210}\) as an \(8\times8\) unitary matrix.
+	
+	Let the three-qubit Toffoli gate (also called the Controlled-Controlled-NOT, or CCX, gate) act on the computational basis 
+	\(\{\ket{q_0q_1q_2}:q_i\in\{0,1\}\}\) by flipping the target qubit \(q_2\) if and only if both control qubits \(q_0\) and \(q_1\) are in state \(\ket{1}\).  
+	
+	\begin{enumerate}[(i)]
+		\item Write down the action of CCX on each basis vector:
+		\[
+		\mathrm{CCX}\,\ket{q_0q_1q_2}
+		= 
+		\ket{q_0\,q_1\,\bigl(q_2 \oplus (q_0\land q_1)\bigr)}.
+		\]
+		\item Using the standard ordered basis
+		\(\ket{000},\ket{001},\ket{010},\ket{011},\ket{100},\ket{101},\ket{110},\ket{111}\),
+		represent \(\mathrm{CCX}\) as an \(8\times8\) unitary matrix.
+	\end{enumerate}
+\begin{proof}[\normalfont\bfseries\textcolor{magenta}{Sol}]
+	With the lexicographic ordering
+	\(\ket{000},\ket{001},\ket{010},\ket{011},\ket{100},\ket{101},\ket{110},\ket{111}\),
+	its matrix representation is the \(8\times8\) unitary
+	\[
+	\mathrm{CCX}
+	=
+	\begin{pmatrix}
+		1&0&0&0&0&0&0&0\\
+		0&1&0&0&0&0&0&0\\
+		0&0&1&0&0&0&0&0\\
+		0&0&0&1&0&0&0&0\\
+		0&0&0&0&1&0&0&0\\
+		0&0&0&0&0&1&0&0\\
+		0&0&0&0&0&0&0&1\\
+		0&0&0&0&0&0&1&0
+	\end{pmatrix},
+	\]
+	i.e.\ the first six basis states are fixed and the last two are swapped.
+\end{proof}
+\end{enumerate}

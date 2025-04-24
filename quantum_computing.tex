@@ -1,0 +1,193 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction to Quantum Computing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper]{report}
+
+%-------------------------
+% Package Imports
+%-------------------------
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools,commath}
+\usepackage{bm}            % for bold math symbols
+
+\usepackage[margin=1in]{geometry}            % Page margins
+\usepackage{graphicx}                        % For figures and logos
+\usepackage{hyperref}                        % Hyperlinks
+\usepackage{listings}                        % Code listings
+\usepackage{xcolor}                          % Color for listings
+\usepackage{fancyhdr}                        % Header & footer
+\usepackage{titlesec}                        % Custom section titles
+\usepackage{setspace}                        % Line spacing
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{booktabs}
+
+\usepackage{braket}
+\usepackage{physics}       % for bra-ket notation (optional)
+
+\usepackage{tikz}          % for circuit diagrams
+\usepackage{pgfplots}
+\usetikzlibrary{quantikz}  % for quantum circuit diagrams
+
+%-------------------------
+% Fonts
+%-------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newpxtext,newpxmath}
+\usepackage{sectsty}
+
+%-------------------------
+% Listing Settings
+%-------------------------
+\lstset{
+	basicstyle=\footnotesize\ttfamily,
+	breaklines=true,
+	frame=single,
+	columns=fullflexible,
+	captionpos=b,
+	numbers=left
+}
+
+%─────────────────────────────────────────────────────────────────────────────%
+% 1) load xcolor & define VS Code Light+–style colors
+%─────────────────────────────────────────────────────────────────────────────%
+\usepackage{xcolor}
+% from light_vs.json (“keyword”, “comment”, “string”, “constant.numeric” scopes) 
+\definecolor{vscKeyword}  {HTML}{0000FF}  % blue for keywords
+\definecolor{vscComment}  {HTML}{008000}  % green for comments
+\definecolor{vscString}   {HTML}{A31515}  % red   for strings
+\definecolor{vscNumber}   {HTML}{098658}  % teal  for numerics
+% from light_plus.json (“entity.name.function”, “support.function”) 
+\definecolor{vscFunction} {HTML}{795E26}  % brown for built-ins / function names
+\definecolor{vscType}     {HTML}{267F99}  % cyan  for types
+\definecolor{vscConstant} {HTML}{0070C1}  % blue  for constants/enums
+\definecolor{vscVariable} {HTML}{001080}  % navy  for variable names
+% a neutral gray for line numbers and frame rule
+\definecolor{vscGray}     {RGB}{128,128,128}
+
+%─────────────────────────────────────────────────────────────────────────────%
+% 2) define the “PythonVSCodeLight” listings style
+%─────────────────────────────────────────────────────────────────────────────%
+\usepackage{listings}
+\lstdefinestyle{python}{
+	language=Python,
+	basicstyle=\ttfamily\small,
+	% core token styles
+	keywordstyle=\color{vscKeyword}\bfseries,
+	commentstyle=\color{vscComment}\itshape,
+	stringstyle=\color{vscString},
+	identifierstyle=\color{black},
+	% highlight common built-ins as “functions”
+	emph={print,range,len,dict,list,set,int,float,str,open},
+	emphstyle=\color{vscFunction},
+	% True/False/None as “constants”
+	morekeywords={True,False,None},
+	morekeywords=[2]{True,False,None},
+	keywordstyle=[2]\color{vscConstant}\bfseries,
+	% line numbers
+	numbers=left,
+	numberstyle=\tiny\color{vscGray},
+	numbersep=8pt,
+	% clean, white background
+	backgroundcolor=\color{white},
+	frame=single,
+	rulecolor=\color{vscGray},
+	showstringspaces=false,
+	breaklines=true,
+	tabsize=4,
+	captionpos=b,
+}
+
+%-------------------------
+% Custom Header & Footer
+%-------------------------
+\pagestyle{fancy}
+\fancyhf{}
+%\fancyhead[L]{\nouppercase{\leftmark}}
+%\renewcommand{\sectionmark}[1]{%
+%	\markright{%
+%		Section~\thesection\ ---\ #1%
+%	}%
+%}
+\fancyhead[L]{\nouppercase{\rightmark}}
+\fancyhead[R]{\thepage}
+
+%-------------------------
+% Theorem and Definition Environments
+%-------------------------
+\newtheoremstyle{definitionstyle} % Name of the style
+{3pt} % Space above
+{3pt} % Space below
+{} % Body font
+{} % Indent amount
+{\bfseries} % Theorem head font
+{.} % Punctuation after theorem head
+{2.5mm} % Space after theorem head
+{} % Theorem head spec
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\theoremstyle{definitionstyle}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+\newtheorem*{note}{Note}
+
+%-------------------------
+% Title Page Information
+%-------------------------
+\title{\Huge \textbf{Introduction to Quantum Computing}\\[0.5em]
+	\LARGE Grover and Shor’s Algorithms}
+\author{\Large\textbf{Ji, YongHyeon} \\[.5cm] Department of Cyber Security\\ Kookmin University}
+\date{\today}
+
+%-------------------------
+% New Commands
+%-------------------------
+\renewcommand{\emph}[1]{\textbf{#1}}
+%\renewcommand{\ket}[1]{\left|#1\right\rangle}
+%\renewcommand{\bra}[1]{\left\langle#1\right|}
+%\renewcommand{\braket}[2]{\left\langle#1\,\middle|\,#2\right\rangle}
+\renewcommand{\vec}[1]{\textbf{#1}}
+
+\newcommand{\C}{\mathbb{C}}
+
+%-------------------------
+% Begin Document
+%-------------------------
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 1: Linear Algebra
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{contents/linear_algebra}	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 2: Basic Quantum Alogrithms
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{contents/basic_quantum_algorithm}	
+	
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendices
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+%\chapter{Appendix A: Additional Build Options}
+%For further customization, refer to \texttt{CONFIGURE.md} in the liboqs repository. It details additional build options, including enabling/disabling specific algorithms via the configuration variable \texttt{OQS\_ALGS\_ENABLED}.
+%
+%\chapter{Appendix B: References}
+%\begin{itemize}
+%	\item \href{https://github.com/open-quantum-safe/liboqs}{liboqs GitHub Repository}
+%	\item \href{https://openquantumsafe.org/}{Open Quantum Safe Project}
+%	\item \href{https://github.com/open-quantum-safe/liboqs/blob/main/README.md}{README.md}
+%\end{itemize}
+
+\chapter{Exercises}
+\input{exercises/exercises_1}
+
+\end{document}

@@ -1,0 +1,351 @@
+\chapter{Linear Operators on Finite-Dimensional Hilbert Spaces}
+
+Quantum computing relies fundamentally on the language of linear algebra. Quantum states are vectors in complex Hilbert spaces, and quantum operations are linear operators acting on these spaces.
+
+\section{Vector Spaces and Dirac's Bra--Ket Notation}
+\begin{definition}[Hilbert Space]
+	A \emph{Hilbert space} $\mathcal{H}$ is a complete inner product space over the field $\mathbb{F}$ (either $\mathbb{R}$ or $\mathbb{C}$). Concretely, $\mathcal{H}$ satisfies:
+	\begin{enumerate}
+		\item (Vector Space) $\mathcal{H}$ is a vector space over $\mathbb{F}$.
+		\item (Inner Product) There exists a map
+		\[
+		\langle \cdot,\cdot\rangle:\mathcal{H}\times\mathcal{H}\to\mathbb{F}
+		\]
+		satisfying for all $x,y,z\in\mathcal{H}$ and $\alpha,\beta\in\mathbb{F}$:
+		\begin{enumerate}
+			\item (Conjugate Symmetry) $\langle x,y\rangle=\overline{\langle y,x\rangle}$.
+			\item (Linearity) $\langle \alpha x+\beta y,\,z\rangle=\alpha\langle x,z\rangle+\beta\langle y,z\rangle$.
+			\item (Positive-Definiteness) $\langle x,x\rangle\ge0$, and $\langle x,x\rangle=0$ if and only if $x=0$.
+		\end{enumerate}
+		\item (Norm) The norm induced by the inner product, $\|x\|=\sqrt{\langle x,x\rangle}$, defines a metric $d(x,y)=\|x-y\|$.
+		\item (Completeness) $\mathcal{H}$ is complete with respect to the metric $d$, i.e., every Cauchy sequence in $\mathcal{H}$ converges to a limit in $\mathcal{H}$.
+	\end{enumerate}
+\end{definition}
+
+%\begin{example}
+%	The space \[
+%	\ell^2(\mathbb{N})=\set{(x_n):\sum\abs{x_n}^2<\infty}
+%	\] with inner product $\langle x,y\rangle=\sum_{n=1}^\infty x_n\overline{y_n}$ is a Hilbert space.
+%\end{example}
+
+\begin{definition}[Ket]
+	Let $\mathcal{H}$ be a Hilbert space over $\mathbb{C}$. A \emph{ket} $\ket{\psi}$ denotes an element $\psi\in\mathcal{H}$.
+\end{definition}
+
+\begin{definition}[Bra]
+	To each ket $\ket{\psi}\in\mathcal{H}$, there corresponds a unique continuous linear functional (via the Riesz representation theorem) denoted by the \emph{bra} $\bra{\psi}\colon\mathcal{H}\to\mathbb{C}$, defined by
+	\[\bra{\psi}\left(\ket{\phi}\right)=\langle\psi,\phi\rangle,\quad\forall\ket{\phi}\in\mathcal{H}.\]
+\end{definition}
+\begin{remark}
+The mapping $\ket{\psi}\mapsto\bra{\psi}$ is an antilinear isometric isomorphism $J:\mathcal{H}\to\mathcal{H}^*$, where $\mathcal{H}^*$ is the dual space.
+\end{remark}
+
+\newpage
+%\begin{definition}[Inner Product]
+%	The inner product of two kets $\ket{\phi},\ket{\psi}\in\mathcal{H}$ is denoted as
+%	\[\bra{\phi}\cdot\ket{\psi}=\braket{\phi}{\psi}
+%%	\braket{\phi|\psi}=\bra{\phi}(\ket{\psi})=\langle\phi,\psi\rangle.\]
+%\]
+%	This quantity satisfies:
+%	\begin{enumerate}
+%		\item $\braket{\phi|\psi}=\overline{\braket{\psi|\phi}}$.
+%		\item $\braket{\alpha\phi+\beta\chi|\psi}=\alpha^*\braket{\phi|\psi}+\beta^*\braket{\chi|\psi}$.
+%		\item $\braket{\phi|\phi}\ge0$, with equality iff $\ket{\phi}=0$.
+%	\end{enumerate}
+%\end{definition}
+%
+%\begin{proposition}[Outer Product]
+%	For $\ket{\phi},\ket{\psi}\in\mathcal{H}$, the \emph{outer product} \(\ket{\phi}\bra{\psi}\) denotes the rank-one operator on $\mathcal{H}$ given by
+%	\[(\ket{\phi}\bra{\psi})\ket{\chi}=\ket{\phi}\braket{\psi|\chi},\quad \forall\ket{\chi}\in\mathcal{H}.
+%	\]
+%	In matrix terms, if $\ket{\phi}$ and $\ket{\psi}$ have components $\phi_i,\psi_j$ in an orthonormal basis, then $(\ket{\phi}\bra{\psi})_{ij}=\phi_i\overline{\psi_j}$.
+%\end{proposition}
+%
+%\begin{example}
+%	In $\mathbb{C}^2$ with standard basis $\{\ket{0},\ket{1}\}$, the outer product $\ket{0}\bra{1}$ is the matrix
+%	\[\begin{pmatrix}1\\0\end{pmatrix}(0\;1)=\begin{pmatrix}0 & 1\\ 0 & 0\end{pmatrix}.
+%	\]
+%\end{example}
+
+
+\newpage
+%\begin{definition}[Complex Vector Space]
+%	A \emph{complex vector space} $\mathcal V$ is a set with operations of addition and scalar multiplication (by $\mathbb C$) satisfying the axioms of a vector space.
+%\end{definition}
+%
+%In quantum mechanics, we denote vectors using \emph{Dirac notation}:
+%\begin{itemize}
+%	\item A vector $\phi\in\mathcal V$ is written as a \emph{ket} $\ket{\phi}$.
+%	\item Its dual (conjugate transpose) is written as a \emph{bra} $\bra{\phi}$.
+%\end{itemize}
+%The inner product between $\ket{\phi}$ and $\ket{\psi}$ is $\braket{\phi|\psi}\in\mathbb C$.
+
+%\section{Inner Product and Norm}
+%\begin{definition}[Inner Product]
+%	An inner product on $\mathcal V$ is a map $\braket{\cdot|\cdot}:\mathcal V\times\mathcal V\to\mathbb C$ satisfying conjugate symmetry, linearity in the second argument, and positive-definiteness.
+%\end{definition}
+%
+%\begin{definition}[Norm]
+%	The norm of $\ket{\psi}$ is $\|\psi\|=\sqrt{\braket{\psi|\psi}}$. A vector of unit norm is called a \emph{normalized} state.
+%\end{definition}
+
+%\begin{definition}[Orthogonality and Orthonormality]
+%	Two vectors $\ket{\phi},\ket{\psi}$ are \emph{orthogonal} if $\braket{\phi|\psi}=0$. A set is \emph{orthonormal} if each vector has unit norm and they are pairwise orthogonal.
+%\end{definition}
+
+%\section{Bases and Dimension}
+%\begin{definition}[Basis]
+%	An orthonormal basis of $\mathcal V$ is a set $\{\ket{v_i}\}_{i=1}^n$ such that any $\ket{\psi}\in\mathcal V$ can be uniquely expressed as $\ket{\psi}=\sum_i c_i\ket{v_i}$, $c_i=\braket{v_i|\psi}$.
+%\end{definition}
+%The dimension $\dim\mathcal V=n$ is the number of basis vectors.
+%
+%\section{Linear Operators}
+%\begin{definition}[Linear Operator]
+%	A map $L: \mathcal V\to\mathcal V$ is \emph{linear} if $L(\alpha\ket{\phi}+\beta\ket{\psi})=\alpha L\ket{\phi}+\beta L\ket{\psi}$ for all scalars $\alpha,\beta\in\mathbb C$.
+%\end{definition}
+%
+%Given an orthonormal basis $\{\ket{v_i}\}$, any operator $L$ has a matrix representation $L_{ij}=\bra{v_i}L\ket{v_j}$. Acting on a state $\ket{\psi}$ with components $\psi_j$, we get $\ket{\phi}=L\ket{\psi}$ with $\phi_i=\sum_j L_{ij}\psi_j$.
+
+\subsection{Adjoint, Hermitian, and Unitary Operators}
+\begin{definition}[Adjoint]
+	The \emph{adjoint} $L^\dagger$ satisfies $\bra{\phi}L\ket{\psi}=\bra{L^\dagger\phi}\psi$ for all states.
+\end{definition}
+
+\begin{definition}[Hermitian Operator]
+	An operator $H$ is \emph{Hermitian} if $H=H^\dagger$. Its eigenvalues are real, and eigenvectors corresponding to distinct eigenvalues are orthogonal.
+\end{definition}
+
+\begin{definition}[Unitary Operator]
+	An operator $U$ is \emph{unitary} if $U^\dagger U=I$. Unitary operators preserve norms and inner products.
+\end{definition}
+
+\section{Eigenvalues and Eigenvectors}
+\begin{definition}[Eigenvalue Equation]
+	For $L$ a linear operator, an eigenvector $\ket{v}$ and eigenvalue $\lambda$ satisfy
+	\[L\ket{v}=\lambda\ket{v}.\]
+\end{definition}
+Spectral decomposition: any Hermitian $H$ can be written as $H=\sum_i h_i\ket{h_i}\bra{h_i}$.
+
+\section{Quantum States and Observables}
+A quantum state is represented by a normalized vector $\ket{\psi}$. Observables correspond to Hermitian operators; measurement yields an eigenvalue with probability $|\braket{h_i|\psi}|^2$.
+
+\section{Quantum Gates as Unitary Transformations}
+Elementary gates act on qubits ($2$-dimensional Hilbert spaces):
+\begin{align*}
+	X &= \begin{pmatrix}0 & 1\\1 & 0\end{pmatrix}, & Y &= \begin{pmatrix}0 & -i\\ i & 0\end{pmatrix}, & Z &= \begin{pmatrix}1 & 0\\ 0 & -1\end{pmatrix}, \\
+	H &= \frac{1}{\sqrt2}\begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}.
+\end{align*}
+These are unitary and represent rotation and superposition operations.
+\begin{definition}[Standard and Hadamard Quantum States]
+	Let $\mathcal H=\mathbb C^2$ be the single‐qubit Hilbert space with the canonical orthonormal basis
+	\[
+	\ket{0}=\begin{pmatrix}1\\0\end{pmatrix},
+	\qquad
+	\ket{1}=\begin{pmatrix}0\\1\end{pmatrix}.
+	\]
+	We then define the \emph{Hadamard basis} states by applying the Hadamard operator
+	\[
+	H=\frac1{\sqrt2}\begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}
+	\]
+	to the computational basis as follows:
+	\[
+	\ket{+}\;=\;H\ket{0}
+	\;=\;\frac1{\sqrt2}\bigl(\ket{0}+\ket{1}\bigr)
+	=\frac1{\sqrt2}\begin{pmatrix}1\\1\end{pmatrix},
+	\]
+	\[
+	\ket{-}\;=\;H\ket{1}
+	\;=\;\frac1{\sqrt2}\bigl(\ket{0}-\ket{1}\bigr)
+	=\frac1{\sqrt2}\begin{pmatrix}1\\-1\end{pmatrix}.
+	\]
+	These four vectors satisfy the following orthonormality relations:
+	\[
+	\langle 0 \mid 0\rangle = \langle 1 \mid 1\rangle = \langle + \mid +\rangle = \langle - \mid -\rangle = 1,
+	\]
+	\[
+	\langle 0 \mid 1\rangle = \langle + \mid -\rangle = 0,
+	\]
+	and in fact
+	\[
+	\langle 0 \mid +\rangle = \langle 0 \mid -\rangle = \langle 1 \mid +\rangle = \langle 1 \mid -\rangle = \tfrac1{\sqrt2}(\pm1),
+	\]
+	so that each of $\ket0,\ket1,\ket+,\ket-$ has unit norm:
+	\[
+	\|\ket\psi\| \;=\;\sqrt{\langle\psi|\psi\rangle} \;=\;1
+	\quad
+	\text{for }
+	\ket\psi\in\{\ket0,\ket1,\ket+,\ket-\}.
+	\]
+\end{definition}
+\[
+\ket{0}=\begin{pmatrix}1\\0\end{pmatrix},\quad
+\ket{1}=\begin{pmatrix}0\\1\end{pmatrix},\quad
+\ket{+}=\frac1{\sqrt2}\begin{pmatrix}1\\1\end{pmatrix},\quad
+\ket{-}=\frac1{\sqrt2}\begin{pmatrix}1\\-1\end{pmatrix}.
+\]
+\textbf{Norms:}
+\[
+\langle0|0\rangle
+= \begin{pmatrix}1&0\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}
+=1,
+\quad
+\langle1|1\rangle
+=(0\;1)\begin{pmatrix}0\\1\end{pmatrix}
+=1,
+\]
+\[
+\langle+|+\rangle
+=\frac1{2}(1\;1)\begin{pmatrix}1\\1\end{pmatrix}
+=\frac1{2}(1+1)=1,
+\quad
+\langle-|-\,\rangle
+=\frac1{2}(1\;-1)\begin{pmatrix}1\\-1\end{pmatrix}
+=\frac1{2}(1+1)=1.
+\]
+\newpage\noindent
+\textbf{Computational–Hadamard overlaps:}
+\[
+\langle0|+\rangle
+=(1\;0)\frac1{\sqrt2}\begin{pmatrix}1\\1\end{pmatrix}
+=\frac1{\sqrt2}(1\cdot1+0\cdot1)
+=\frac1{\sqrt2},
+\]
+\[
+\langle0|-\rangle
+=(1\;0)\frac1{\sqrt2}\begin{pmatrix}1\\-1\end{pmatrix}
+=\frac1{\sqrt2}(1\cdot1+0\cdot(-1))
+=\frac1{\sqrt2},
+\]
+\[
+\langle1|+\rangle
+=(0\;1)\frac1{\sqrt2}\begin{pmatrix}1\\1\end{pmatrix}
+=\frac1{\sqrt2}(0\cdot1+1\cdot1)
+=\frac1{\sqrt2},
+\]
+\[
+\langle1|-\rangle
+=(0\;1)\frac1{\sqrt2}\begin{pmatrix}1\\-1\end{pmatrix}
+=\frac1{\sqrt2}(0\cdot1+1\cdot(-1))
+=-\frac1{\sqrt2}.
+\]
+\textbf{Computational–computational and Hadamard–Hadamard orthogonality:}
+\[
+\langle0|1\rangle
+=(1\;0)\begin{pmatrix}0\\1\end{pmatrix}
+=0,
+\quad
+\langle+|-\rangle
+=\frac1{2}(1\;1)\begin{pmatrix}1\\-1\end{pmatrix}
+=\frac1{2}(1-1)=0.
+\]
+All other overlaps follow by conjugation or symmetry.  Thus the set 
+\(\{\ket0,\ket1,\ket+,\ket-\}\) 
+is orthonormal and each has unit norm. 
+%\section{Tensor Products and Composite Systems}
+%For composite systems $\mathcal V_A\otimes\mathcal V_B$, basis states are tensor products $\ket{v_i}\otimes\ket{w_j}$. A two-qubit state is a vector in $\mathbb C^2\otimes\mathbb C^2=\mathbb C^4$.
+
+%\section{Conclusion}
+%Linear algebra provides the mathematical framework for quantum computing. Mastery of vector spaces, operators, and their spectral properties is essential to understanding quantum algorithms.
+
+% ---------------------------------------------------------------------------------------
+%\begin{definition}[Adjoint Operator]
+%	The \emph{adjoint} $L^\dagger$ of a linear operator $L$ is defined by
+%	\[ \braket{\phi | L\psi} = \braket{L^\dagger\phi | \psi}, \quad \forall\ket{\phi},\ket{\psi}\in\mathcal H. \]
+%\end{definition}
+%
+%\begin{definition}[Hermitian Operator]
+%	An operator $H$ is \emph{Hermitian} if $H=H^\dagger$. Its spectrum lies on the real axis, and it admits a spectral decomposition $H=\sum_j h_j\ket{h_j}\bra{h_j}$ with orthonormal eigenvectors $\{\ket{h_j}\}$.
+%\end{definition}
+%
+%\begin{definition}[Unitary Operator]
+%	An operator $U$ is \emph{unitary} if $U^\dagger U = U U^\dagger = I$, equivalently $\|U\psi\|=\|\psi\|$ for all $\ket{\psi}$.
+%\end{definition}
+
+\section{Eigenvalue Problems}
+\begin{definition}[Eigenvalues and Eigenvectors]
+	For $L$ a linear operator, a scalar $\lambda\in\mathbb C$ and nonzero ket $\ket{v}$ satisfying
+	\[ L\ket{v} = \lambda\ket{v} 
+	\]
+	are called an \emph{eigenvalue} and its corresponding \emph{eigenvector}.
+\end{definition}
+
+Spectral theorems guarantee diagonalizability of Hermitian and normal operators.
+
+\section{Tensor Products}
+For composite quantum systems, state spaces combine via the tensor product.
+\begin{definition}[Tensor Product of Spaces]
+	Given Hilbert spaces $\mathcal H_A$ and $\mathcal H_B$, their tensor product $\mathcal H_A\otimes\mathcal H_B$ is the completion of the span of simple tensors $\ket{\psi}_A\otimes\ket{\phi}_B$ under the inner product
+	\[ \braket{\psi_A\otimes\phi_B | \psi'_A\otimes\phi'_B} = \braket{\psi_A|\psi'_A}\,\braket{\phi_B|\phi'_B}. \]
+\end{definition}
+
+\begin{definition}[Tensor Product of Operators]
+	For $A\in\mathcal L(\mathcal H_A)$ and $B\in\mathcal L(\mathcal H_B)$, define $A\otimes B\in\mathcal L(\mathcal H_A\otimes\mathcal H_B)$ by
+	\[ (A\otimes B)(\ket{\psi}_A\otimes\ket{\phi}_B) = (A\ket{\psi}_A)\otimes(B\ket{\phi}_B). \]
+\end{definition}
+
+\section{Matrix Representations and Quantum Gates}
+In an orthonormal basis $\{\ket{i}\}$, operators and kets admit matrix and column-vector representations. Common single-qubit gates include:
+\[
+X=\begin{pmatrix}0 & 1\\1 & 0\end{pmatrix},\quad
+Y=\begin{pmatrix}0 & -i\\i & 0\end{pmatrix},\quad
+Z=\begin{pmatrix}1 & 0\\0 & -1\end{pmatrix},\quad
+H=\frac1{\sqrt2}\begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}.
+\]
+Multi-qubit gates arise as tensor products of these.
+\begin{definition}[Action of Single‐Qubit Gates on Canonical States]
+	Let $\mathcal H=\operatorname*{span}\{\ket0,\ket1\}$ be the single‐qubit Hilbert space, and define
+	\[
+	\ket+\;=\;\tfrac1{\sqrt2}(\ket0+\ket1),
+	\qquad
+	\ket-\;=\;\tfrac1{\sqrt2}(\ket0-\ket1).
+	\]
+	The Pauli and Hadamard gates act on these four states as follows:
+	\[
+	\begin{aligned}
+		X\ket0&=\ket1,&\quad X\ket1&=\ket0,\\
+		X\ket+&=\ket+,&\quad X\ket-&=-\ket-,\\[6pt]
+		Y\ket0&=i\ket1,&\quad Y\ket1&=-\,i\ket0,\\
+		Y\ket+&=i\ket-,&\quad Y\ket-&=-\,i\ket+,\\[6pt]
+		Z\ket0&=\ket0,&\quad Z\ket1&=-\ket1,\\
+		Z\ket+&=\ket-,&\quad Z\ket-&=\ket+,\\[6pt]
+		H\ket0&=\ket+,&\quad H\ket1&=\ket-,\\
+		H\ket+&=\ket0,&\quad H\ket-&=\ket1.
+	\end{aligned}
+	\]
+	In matrix form (in the $\{\ket0,\ket1\}$ basis),
+	\[
+	X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\;
+	Y=\begin{pmatrix}0&-i\\i&0\end{pmatrix},\;
+	Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix},\;
+	H=\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}.
+	\]
+\end{definition}
+
+\begin{definition}[Hermitian Operator]
+	An operator \(H\) on a Hilbert space \(\mathcal H\) is called \emph{Hermitian} (or self–adjoint) if
+	\[
+	H^\dagger = H.
+	\]
+	Equivalently, for all \(\ket{\psi},\ket{\phi}\in\mathcal H\),
+	\[
+	\bra{\psi}H\ket{\phi}
+	= \overline{\bra{\phi}H\ket{\psi}}.
+	\]
+\end{definition}
+
+\begin{definition}[Unitary Operator]
+	An operator \(U\) on \(\mathcal H\) is called \emph{unitary} if
+	\[
+	U^\dagger U \;=\; U\,U^\dagger \;=\; I.
+	\]
+	Equivalently, \(U^{-1}=U^\dagger\), and \(U\) preserves inner products:
+	\[
+	\bra{U\psi}\,U\phi = \bra{\psi}\phi.
+	\]
+\end{definition}
+
+
+\section{Conclusion}
+This linear algebra toolkit underpins quantum algorithm design and analysis. Mastery of these concepts is essential for advanced study in quantum computation and information.
+
+
